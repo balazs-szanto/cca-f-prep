@@ -31,6 +31,8 @@ you would ship, and test them in an interactive session.
 Requires Python 3.11+, [`uv`](https://docs.astral.sh/uv/), and the Claude Code
 CLI, logged in with `claude auth login`.
 
+    git clone https://github.com/balazs-szanto/cca-f-prep.git
+    cd cca-f-prep
     uv sync                                        # creates .venv, installs the SDK
 
 `uv.lock` is committed on purpose: it pins the exact dependency set every
@@ -116,19 +118,30 @@ runs it, and the result comes back into the conversation. That is the whole idea
 a standard shape for "here are some functions, and here is how to call them", so
 that a tool written once can be used by any client that speaks it.
 
-The only distinction that matters for these demos is **where the server runs**:
+The distinction that matters most for these demos is **where the code runs**, and
+there are three answers, not two:
 
-- **In-process** (`create_sdk_mcp_server`) — the "server" is just Python objects
-  in your own program. No pipes, no second process, no handshake. Used by
-  `basics.tools` and `tools_mcp.permission_gate`.
-- **External over stdio** — the server is a separate program the client launches
-  and talks to over its stdin and stdout, one JSON message per line. Used by
-  `tools_mcp.external_mcp`, with `src/mockserver` as the server.
+- **In-process MCP** (`create_sdk_mcp_server`) — the "server" is just Python
+  objects in your own program. No pipes, no second process, no handshake. This is
+  what most of the repo uses: `basics.tools`, every `tools_mcp` demo except the
+  external one, and the three demos elsewhere that hold a tool —
+  `orchestration.triage`, `orchestration.workflow_vs_agent` and
+  `reliability.error_taxonomy`.
+- **External MCP over stdio** — the server is a separate program the client
+  launches and talks to over its stdin and stdout, one JSON message per line.
+  Used by `tools_mcp.external_mcp`, with `src/mockserver` as the server.
+- **Not MCP at all** — Claude Code's own built-in tools, which you enable through
+  `ClaudeAgentOptions(tools=[...])` rather than by attaching a server. Some the
+  CLI executes locally; at least one, `WebSearch`, Anthropic executes on its own
+  infrastructure. `tools_mcp.where_code_runs` puts this side by side with the
+  first case and finds that the SDK reports both identically.
 
-Both give the model exactly the same thing. Everything that differs — startup
-cost, crash isolation, language independence, and whether anything can decline to
-attach it — follows from that one choice. Section 5 lets you watch the protocol
-directly, for free, which is the fastest way to make this concrete.
+The first two give the model exactly the same thing, and everything that differs
+between them — startup cost, crash isolation, language independence, and whether
+anything can decline to attach it — follows from that one choice. Section 5 lets
+you watch that protocol directly, for free, which is the fastest way to make it
+concrete. The third case is not a variant of the other two: nothing you write is
+involved, which is the whole point of the demo that examines it.
 
 ## 4. The twelve domain demos
 
@@ -151,7 +164,7 @@ because the docs pose the question the numbers answer.
 
 | Run | Free? | What to look for |
 |-----|-------|------------------|
-| `tools_mcp.where_code_runs` | `$` | **Read this one first.** The same question against a tool implemented in this repo and a tool implemented nowhere in it, with every content block's class name printed. Both come back as `ToolUseBlock`: the client/server line the documentation is built on is not visible from here. |
+| `tools_mcp.where_code_runs` | `$` | **Read this one first.** The same question against a tool implemented in this repo and a tool implemented nowhere in it, with every content block's class name printed. One arm really does execute on Anthropic's servers — that is documented, not guessed — and both arms still come back as `ToolUseBlock`. The client/server line the documentation is built on is real; the block stream just does not carry it. The only thing that tells them apart is whether your own handler ran. |
 | `tools_mcp.schema_design` | `$` | One tool defined twice, loose and strict, and the arguments the model actually passed. Then look again at *which* keywords produced the difference — it is fewer than you think. |
 | `tools_mcp.parallel_tools` | `$` | Two independent lookups against two where the second needs the first's output. A null result on how the calls were grouped, and a hundred-to-one difference on the clock. Read the GAP lines before the groupings. |
 | `tools_mcp.tool_overhead` | (free) | What a tools array costs before anything calls it: about 221 tokens per tool, linear, plus what the harness's own toolset costs you unasked. Also the demo where the instrument itself reads a plausible wrong number if you ask it too early. |
@@ -222,7 +235,11 @@ itself. All of it is free.
   tool-use documentation set, triaged into what this repo demonstrates, what it
   can only observe, and what needs the Messages API and is therefore documented
   and never faked. Read it before concluding that the D4 demos cover tool use:
-  nine of twenty-four pages are out of reach here, and it says which and why.
+  ten of twenty-four pages are out of reach here, and it says which and why.
+  One of those ten got there by being **demoted** — `web-fetch-tool` was listed
+  as reachable until Claude Code's `WebFetch` turned out not to be the server
+  tool of that name. A reference page that only ever gains coverage is one
+  nobody is checking.
 - [`docs/traps.md`](docs/traps.md) — anti-patterns the demos show on purpose,
   plus the environment traps found while building this, each with its evidence.
 - [`docs/domain-map.md`](docs/domain-map.md) — how this repo labels its own
@@ -253,12 +270,20 @@ where this repo was written, and each tells you how to check your own case.
 
 ## Conventions
 
-Every module carries two things, and they are deliberately not the same thing.
-The `LESSON` dict at the top is reader-facing: setup, run, cost, expect, learn.
-The docstring below it is practitioner-facing:
+Every **demo** module carries two things, and they are deliberately not the same
+thing. The `LESSON` dict at the top is reader-facing: setup, run, cost, expect,
+learn. The docstring below it is practitioner-facing:
 `WHAT / WHY / DOMAIN / TRADEOFF / ALTERNATIVE`. The TRADEOFF line is the part
 worth arguing with — several were wrong until the demos were actually run, and
 were rewritten to match the measurement rather than the other way round.
+
+Modules that are not demos carry the docstring and no `LESSON`, because a
+`LESSON` promises something you can run and see. `playground/teach.py`,
+`playground/lessons.py` and `tools_mcp/instruments.py` are in that category.
+`instruments.py` is worth opening anyway: it holds the three measuring helpers
+the D4 demos share, and each one documents what it does **not** answer, which is
+the part that mattered. All three exist because the obvious version of the
+measurement returned a confident wrong answer first.
 
 Every claim about Claude's behaviour states its evidential standing in place:
 **DOCUMENTED** (official docs, with URL and fetch date), **MEASURED** (run here,
@@ -268,3 +293,15 @@ standing rather than picking the tidier side. An earlier version of this repo
 used a `[VERIFY]` marker and a central register of open questions; both were
 development scaffolding and have been retired, with everything a reader needs
 moved next to the code it concerns or into [`docs/traps.md`](docs/traps.md).
+
+Those labels are meant to move. An `INFERRED` guess about what Claude Code's
+`WebSearch` actually is was later settled from documentation and turned out to be
+**wrong**; the file that depended on it now carries the correction and the
+citation, and `docs/tool-surface.md` records what the guess had been. A repo
+where no label ever changes is one where nobody went back and checked.
+
+## Licence
+
+MIT — see [`LICENSE`](LICENSE). Use it, fork it, argue with it. The measurements
+in `docs/status.md` were taken on one machine on one date against the pinned
+`uv.lock`; if yours disagree, yours are the current ones.
