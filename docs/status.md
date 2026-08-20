@@ -76,6 +76,32 @@ run date against the file's modification time and fails when a file is newer tha
 the measurement that justifies its row. Prose accounting of this kind had been
 got wrong four times before it was automated.
 
+`scripts/check_caveat_accounting.py` is the one that guards this section
+directly. It checks that the stated counts match the `(see caveat)` markers in
+the table, that the named demos are exactly the marked ones in both directions,
+and that every demo with a row is registered in `run.py`. It was proven against
+four fixtures reproducing real defect shapes, including the historical one where
+the prose said six, the table marked seven and the list named five. It also
+failed on its own first contact with this file — a filename has the same
+`word.word` shape as a demo name, so it read `check_status_freshness.py` out of
+a paragraph and reported it as a demo. That bug is fixed and written up in the
+script, because a check that has only been seen passing has not been tested.
+
+`scripts/check_conventions.py` covers two more rules that were being enforced by
+memory: no Python file over the cap **declared in `CLAUDE.md`** rather than
+hardcoded, and every `KNOWN ISSUE` comment block matching the constant the
+runner prints. That duplication is mandated by the convention, and mandated
+duplication with no sync check is how two copies of a paragraph end up
+disagreeing about what went wrong.
+
+**One item is deliberately left unchecked: the counts in the README.** They are
+hand-maintained, the README says so in section 2, and that sentence is at least
+honest. Deriving them would mean parsing prose for numbers written as words in
+running text, which is a different and worse problem than the four checks above
+solve — each of those reads a table, an AST or a generator's own output. The
+counts were stale twice in one round and were caught by hand both times. That is
+a known gap, recorded here rather than left for someone to discover.
+
 `scripts/check_lessons_fresh.py` is the third such script and was written for the
 same reason as the other two. `docs/lessons.md` is generated from every demo's
 `LESSON` block, and regenerating it is a step a person has to remember. On

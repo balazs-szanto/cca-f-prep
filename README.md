@@ -262,6 +262,19 @@ itself. All of it is free.
   source; exit 1 prints the first differing line and points at the fix. It
   exists because that regeneration step was forgotten once and a docs page
   disagreeing with its own source reached a public remote.
+- **The four static checks**, all free, all exit 0 on a clean tree, and each one
+  proven to fail on a real defect before it was trusted:
+
+      uv run python scripts/prepublish_check.py         # nothing personal ships
+      uv run python scripts/check_status_freshness.py   # rows vs file mtimes
+      uv run python scripts/check_caveat_accounting.py  # status.md counts itself
+      uv run python scripts/check_lessons_fresh.py      # generated file vs source
+      uv run python scripts/check_conventions.py        # line cap, KNOWN ISSUE sync
+      uv run python .claude/hooks/check_turn_cap_guard.py
+
+  Every one of them exists because a rule this repo states in prose was broken
+  by the person who wrote the prose. The counts in section 2 are the one piece
+  of hand-maintained arithmetic still unchecked, and `docs/status.md` says why.
 - [`docs/tool-surface.md`](docs/tool-surface.md) — every page of the official
   tool-use documentation set, triaged into what this repo demonstrates, what it
   can only observe, and what needs the Messages API and is therefore documented
