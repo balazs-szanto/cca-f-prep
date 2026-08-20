@@ -120,7 +120,7 @@ The order below is the reading order, and it is load-bearing.
 
 ### tools_mcp.tool_overhead
 
-- **setup** — basics.check_auth passed. Read DESCRIPTION and SCHEMA below and guess, before running, what one tool of that shape costs on the turns nobody calls it.
+- **setup** — basics.check_auth passed. Read DESCRIPTION and SCHEMA below and guess, before running, what one tool of that shape costs you per session, on every turn, including the turns nobody calls it.
 - **run** — uv run python -m playground.run tools_mcp.tool_overhead
 - **cost** — free - 0 model calls, every reading is a control request
 - **expect** — Six toolsets read before any prompt is sent, each showing its on-connect total, its settled total and the polls between them; then a straight-line fit giving cost per tool and fixed server overhead, checked against the rows it was not fitted on.

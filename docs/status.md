@@ -76,6 +76,16 @@ run date against the file's modification time and fails when a file is newer tha
 the measurement that justifies its row. Prose accounting of this kind had been
 got wrong four times before it was automated.
 
+`scripts/check_lessons_fresh.py` is the third such script and was written for the
+same reason as the other two. `docs/lessons.md` is generated from every demo's
+`LESSON` block, and regenerating it is a step a person has to remember. On
+2026-08-20 that step was missed: restored prose in one `LESSON` never reached the
+generated page, and a commit carrying a docs file that disagreed with its own
+source was pushed to a public remote. It was found when an unrelated command
+happened to run the generator, which is not a control. The script regenerates
+into memory and compares, so the drift now fails loudly instead of waiting to be
+noticed.
+
 **The five rows with no caveat**, for completeness: `basics.check_auth` (re-run
 after its rewrite, and it makes no model call so re-running costs nothing),
 `basics.prompt_shape` (its last edit landed between its two runs, so the current

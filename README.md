@@ -92,11 +92,20 @@ block, and this paragraph is maintained by hand.
 
 Run these five in order. They are the whole SDK in miniature.
 
+These five are **all of D0 and all of D3**, which is why neither has a domain
+doc in section 4. D0 is a bucket rather than a domain — auth, one call, one
+schema, one tool have nothing in common except that everything later assumes
+them — so there is no argument to write up, only prerequisites to run. D3 is a
+genuine domain and has exactly one demo, `prompt_shape`, and one demo does not
+justify a `docs/d3-*.md`; inventing one to make the set look symmetrical would
+be the padding this repo argues against everywhere else. What D3 coverage
+actually amounts to is assessed in [`docs/status.md`](docs/status.md).
+
 | # | Run | Free? | What it teaches |
 |---|-----|-------|-----------------|
 | 1 | `basics.check_auth` | free | Which credential is paying, and why your code cannot control that — only refuse. |
 | 2 | `basics.hello` | `$` | `query()` is an async generator over typed messages. The run *is* the loop, and `ResultMessage` is the only place its numbers exist. |
-| 3 | `basics.prompt_shape` | `$` | What is instruction and what is data is a convention you construct. Also a worked null result — the comparison came out flat, twice, and says so. |
+| 3 | `basics.prompt_shape` | `$` | **The repo's only D3 — Prompt Engineering — material**, sitting here rather than in section 4 for the reason given above. What is instruction and what is data is a convention you construct. Also a worked null result: the comparison came out flat, twice, and says so instead of being tuned until it did not. |
 | 4 | `basics.structured` | `$` | `output_format` enforces shape from outside the prompt — and *only* shape. |
 | 5 | `basics.tools` | `$` | A tool is four things that must line up: schema, handler, server alias, allowlist entry. |
 
@@ -151,6 +160,14 @@ run the same task two ways and print both columns; `triage` is a worked pipeline
 documented failure.
 Read the domain doc first, then run it, then read the source — in that order,
 because the docs pose the question the numbers answer.
+
+**This section is D1, D4 and D5 only, and the omissions are deliberate rather
+than oversights.** D0 and D3 are section 3, for the reasons given there. D2 is
+section 6, because none of it runs through the dispatcher. That accounts for
+every domain this repo labels: 5 demos in section 3 plus 12 here is all 17.
+Those labels are the author's own and are **not** verified against any official
+syllabus — see [`docs/domain-map.md`](docs/domain-map.md) before you map any of
+it onto one.
 
 ### D1 — Agentic Architecture and Orchestration · `docs/d1-orchestration.md`
 
@@ -226,11 +243,25 @@ itself. All of it is free.
 
 ## 7. Close the loop
 
-- [`docs/status.md`](docs/status.md) — **read this one.** Every demo, whether it
-  has actually been run, and what is still unverified. It is the honest inventory
-  of what this repo has and has not observed.
+- [`docs/status.md`](docs/status.md) — **read this one.** It is two things.
+  First, the run inventory: every demo, whether it has actually been run, and
+  what is still unverified, including which files were edited after the run that
+  justifies their row. Second, and the reason to open it if you are mapping this
+  onto a syllabus, the **coverage map**: a per-domain assessment saying where
+  the repo is strong and where it is thin, in its own words — D2 is "thin in the
+  worst way: mostly inert", D3 is "one demo, and it produced a null result". Any
+  judgement about what this repo covers should come from that table rather than
+  from counting demos in section 4.
 - [`docs/lessons.md`](docs/lessons.md) — generated from the `LESSON` blocks.
-  Regenerate with `uv run python -m playground.lessons` after editing one.
+  Regenerate with `uv run python -m playground.lessons` after editing one, and
+  check that you did:
+
+      uv run python scripts/check_lessons_fresh.py
+
+  It regenerates into memory and compares. Exit 0 means the page matches its
+  source; exit 1 prints the first differing line and points at the fix. It
+  exists because that regeneration step was forgotten once and a docs page
+  disagreeing with its own source reached a public remote.
 - [`docs/tool-surface.md`](docs/tool-surface.md) — every page of the official
   tool-use documentation set, triaged into what this repo demonstrates, what it
   can only observe, and what needs the Messages API and is therefore documented
