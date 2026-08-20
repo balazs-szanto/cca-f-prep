@@ -1,0 +1,30 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# WHY settings.local.json and not the whole .claude/ directory: everything else
+# in there is the point of the D2 material and must ship - settings.json, both
+# hooks, the slash command. This one file is per-machine state Claude Code writes
+# and rewrites on its own, so tracking it would publish one contributor's local
+# permission grants and then conflict with every reader's. It stays on disk,
+# untracked, and Claude Code recreates it.
+.claude/settings.local.json
+
+# WHY these patterns when no such file exists in the tree today: that is the
+# point. This repo ships a PreToolUse hook whose whole job is refusing to read
+# credential files, and an ignore list that would happily commit one is a hole in
+# the same argument. The cost of a pattern that never matches is nothing; the
+# cost of the one time it would have matched is a rotated secret and a rewritten
+# history.
+*.pem
+*.key
+id_rsa*
+**/.credentials.json
+*.credentials.json
+
+# WHY uv.lock is NOT ignored: it used to be, while the file was tracked anyway,
+# so a clean clone would have silently lost it and resolved different versions
+# than the ones every measurement in docs/status.md was taken against. For an
+# application - and a study repo is one - the lock file is the reproducibility.
+# Ignore it only in a library, where you want to test against a resolution range.

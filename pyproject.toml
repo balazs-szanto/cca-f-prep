@@ -1,0 +1,26 @@
+﻿[project]
+name = "claude-agent-playground"
+version = "0.2.0"
+requires-python = ">=3.11"
+# WHY these two match the LICENSE file exactly and carry no email: the licence
+# names "balazs-szanto" and no address, and metadata that disagrees with the
+# licence it points at is worse than metadata that is merely sparse. An email
+# here would also be a new piece of personal data published by a file nobody
+# reads, which scripts/prepublish_check.py exists to catch.
+license = "MIT"
+authors = [{ name = "balazs-szanto" }]
+dependencies = [
+    "claude-agent-sdk",
+]
+
+# Both packages must be importable: `python -m playground.run` for the demos and
+# `python -m mockserver` for the stdio MCP server they talk to. uv_build ships
+# with uv itself, so this adds no runtime dependency.
+[build-system]
+requires = ["uv_build>=0.8,<0.9"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["playground", "mockserver"]
+module-root = "src"
+
