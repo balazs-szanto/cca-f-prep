@@ -232,9 +232,12 @@ shortly after being written, unasked. Some minutes later, in the same session,
 **they were absent from that list again**, with both `SKILL.md` files byte-
 identical and untouched on disk.
 
-So the honest claim is narrower than the first draft of this paragraph: the
-directory layout and the `name`/`description` front matter are sufficient to be
-registered **at least once**, and registration was not observed to persist.
+It then came back. Over one session the listing went present, absent, present,
+with the files never touched. So the honest claim is narrower than the first
+draft of this paragraph and narrower again than the second: the directory
+layout and the `name`/`description` front matter are sufficient to be
+registered, and **the listing fluctuates**. It is not a stable signal, so
+"the skill is not showing up" is not evidence that it is misconfigured.
 Why it dropped is unknown here and this repo cannot settle it — the plausible
 causes (a re-scan, a context boundary, the same workspace-trust condition that
 keeps `settings.json` inert) are not distinguishable from inside the session.
