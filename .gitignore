@@ -28,3 +28,5 @@ id_rsa*
 # than the ones every measurement in docs/status.md was taken against. For an
 # application - and a study repo is one - the lock file is the reproducibility.
 # Ignore it only in a library, where you want to test against a resolution range.
+
+EXAM-FAQ.md
