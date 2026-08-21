@@ -80,6 +80,12 @@ second system prompt for isolation you had no use for.
 - `src/examlab/agentic_loop.py` and `loop_antipatterns.py` — task statement 1.1,
   the loop itself. `query()` owns termination, so the Agent SDK demos above
   cannot show `stop_reason`; these do, against a fabricated transport.
+- `src/examlab/parallel_tool_use.py` — 1.1 again, the part the other two cannot
+  reach. `agentic_loop.py` uses two *dependent* tools on purpose, so it never
+  shows more than one `tool_use` block in a turn; this one asks for three at
+  once and then gets it wrong three ways. The lesson that does not follow from
+  the single-tool case: a tool that raised is still owed a result block, and
+  dropping it gets the whole request rejected rather than just that call.
 - `src/examlab/chaining.py` — 1.6. A fixed chain against a plan that decides its
   own steps, with the request sizes each one actually built.
 - `src/playground/reliability/session_resume.py` and `session_fork.py` — 1.7.

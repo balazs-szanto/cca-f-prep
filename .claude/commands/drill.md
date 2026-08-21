@@ -11,7 +11,7 @@ table and for the earlier labels these replaced.
 
 | $1 | Weight | Read these |
 |----|--------|------------|
-| `d1` | 27% | `docs/d1-orchestration.md`, `src/playground/orchestration/`, `src/playground/basics/hello.py`, `src/playground/reliability/session_resume.py`, `src/playground/reliability/session_fork.py`, `src/examlab/agentic_loop.py`, `src/examlab/loop_antipatterns.py`, `src/examlab/chaining.py` |
+| `d1` | 27% | `docs/d1-orchestration.md`, `src/playground/orchestration/`, `src/playground/basics/hello.py`, `src/playground/reliability/session_resume.py`, `src/playground/reliability/session_fork.py`, `src/examlab/agentic_loop.py`, `src/examlab/loop_antipatterns.py`, `src/examlab/parallel_tool_use.py`, `src/examlab/chaining.py` |
 | `d2` | 18% | `docs/d2-tools-mcp.md`, `src/playground/tools_mcp/`, `src/playground/basics/tools.py`, `src/mockserver/`, `src/examlab/tool_choice.py`, `src/examlab/tool_errors.py` |
 | `d3` | 20% | `docs/d3-claude-code.md`, `.claude/` including `skills/` and `rules/`, both `CLAUDE.md` files, `src/examlab/refinement.py`, `src/playground/basics/check_auth.py` |
 | `d4` | 20% | `docs/d4-prompt-output.md`, `src/examlab/review_criteria.py`, `src/playground/basics/structured.py`, `src/examlab/structured_output.py`, `src/examlab/validation_retry.py`, `src/examlab/batches.py`, `src/playground/basics/prompt_shape.py` |

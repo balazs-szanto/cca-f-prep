@@ -57,6 +57,7 @@ DEMOS: dict[str, str] = {
     # instead of hiding half the repo behind a command nobody guesses.
     "examlab.agentic_loop": "D1  The loop: stop_reason is the only termination condition",
     "examlab.loop_antipatterns": "D1  Three wrong ways to end the loop, each shown failing",
+    "examlab.parallel_tool_use": "D1  Three tools in one turn: where all the results go",
     "examlab.chaining": "D1  Fixed chain vs dynamic decomposition vs multi-pass",
     "examlab.tool_choice": "D2  auto / any / forced, and what each one costs you",
     "examlab.tool_errors": "D2  Error responses an agent can act on, and ones it cannot",

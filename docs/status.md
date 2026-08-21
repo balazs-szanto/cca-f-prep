@@ -41,6 +41,7 @@ old-to-new map, and which demos land in a domain the exam does not test there.
 | `reliability.context_budget` | RAN CLEAN | 2026-08-21 | Resting cost **16,618** tokens (8.0% of the usable window) where the earlier run read ~12,400; auto-compact threshold 167,000 unchanged; headroom **148,133**; and 32,949 of the reported 'Free space' sits past the threshold. Compaction did not run. |
 | `examlab.agentic_loop` | RAN CLEAN | 2026-08-21 | Three exchanges — two `tool_use`, one `end_turn` — 6 messages in history, then the seven-row `stop_reason` table and `LoopBudgetExceeded` after 2 forced iterations. |
 | `examlab.loop_antipatterns` | RAN CLEAN | 2026-08-21 | Four diagnoses. Two returned silently: the narration after 1 request, and an empty string after 2. Two raised `TransportError`: script exhaustion at request 4, and a rule 4 role violation at request 1. |
+| `examlab.parallel_tool_use` | RAN CLEAN | 2026-08-21 | One turn requesting 3 tools answered in 2 iterations and 4 messages — the same message count a single-tool turn produces — with 3 `tool_result` blocks in one user message, 1 of them `is_error`. Then three rejected requests: rule 3 twice (2 of 3 and 1 of 3 ids unanswered, from opposite causes) and rule 2 once on `toolu_47`. |
 | `examlab.chaining` | RAN CLEAN | 2026-08-21 | 1 / 4 / 3 requests and largest prompts of 468 / 378 / 549 characters. The dynamic arm's largest request **exceeds** the single pass, which the file's first draft claimed the opposite of. |
 | `examlab.tool_choice` | RAN CLEAN | 2026-08-21 | The four modes, the documented forcing overhead, then 6 iterations with no terminal `stop_reason` while the choice was forced, against 2 requests once it was dropped. |
 | `examlab.tool_errors` | RAN CLEAN | 2026-08-21 | Six cases. The structured surface produced retry, fix-and-re-call, escalate, escalate, fix-and-re-call, report; the generic surface produced `guess` six times. |
@@ -54,15 +55,15 @@ old-to-new map, and which demos land in a domain the exam does not test there.
 
 ### What "RAN CLEAN" means for the `examlab` rows, which is less than it looks
 
-Those twelve rows are true and narrow. The code ran and printed what the row
+Those thirteen rows are true and narrow. The code ran and printed what the row
 says. What it consumed was fabricated, and is labelled `SCRIPTED` in place — a
 fourth provenance state introduced in `src/examlab/CLAUDE.md` alongside
 DOCUMENTED, MEASURED and INFERRED.
 
 The fabrication takes two shapes, and the distinction is worth one line.
-Six of the twelve consume a scripted **response** — a list of Messages API
+Seven of the thirteen consume a scripted **response** — a list of Messages API
 replies this repo wrote — so what is real about them is the request their
-loop built and the validator's verdict on it. The other five
+loop built and the validator's verdict on it. The other six
 (`tool_errors`, `structured_output`, `review_criteria`, `refinement`,
 `confidence_routing`, `provenance`) have no transport at all: they are
 arithmetic and policy over a fabricated **fixture**, so what is real about
@@ -86,7 +87,7 @@ one was executed after its last edit.
 **Zero rows are marked "see caveat" as of 2026-08-21.** Every demo in the table
 above was executed on that date, after its last edit, and its row records what
 that execution printed. This is the first time in the project that has been
-true, and it took a deliberate pass: fifteen of the thirty spend quota, and they
+true, and it took a deliberate pass: fifteen of the thirty-one spend quota, and they
 were run one after the other for no reason except that the table was about to be
 merged and half of it was asserting output nobody had seen since editing it.
 
@@ -185,7 +186,7 @@ optional extra without one got a traceback where the documentation promised a
 scripted fallback. Both are fixed and both were found by running the path, which
 took one command each and had not been done.
 
-**The thirty rows with no caveat** are the whole table, and here they are:
+**The thirty-one rows with no caveat** are the whole table, and here they are:
 
 
 `basics.check_auth`, `basics.hello`, `basics.prompt_shape`,
@@ -196,7 +197,8 @@ took one command each and had not been done.
 `tools_mcp.external_mcp`, `tools_mcp.permission_gate`,
 `reliability.session_resume`, `reliability.session_fork`,
 `reliability.error_taxonomy`, `reliability.context_budget`,
-`examlab.agentic_loop`, `examlab.loop_antipatterns`, `examlab.chaining`,
+`examlab.agentic_loop`, `examlab.loop_antipatterns`,
+`examlab.parallel_tool_use`, `examlab.chaining`,
 `examlab.tool_choice`, `examlab.tool_errors`, `examlab.refinement`,
 `examlab.review_criteria`, `examlab.structured_output`,
 `examlab.validation_retry`, `examlab.batches`, `examlab.confidence_routing`,

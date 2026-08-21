@@ -2,11 +2,11 @@
 
 A lab manual in two halves. **`playground/`** is eighteen demos on the Claude
 Agent SDK, each isolating one architectural decision and printing what it costs.
-**`examlab/`** is twelve modules on the request/response layer underneath it —
-the agentic loop, `tool_choice`, prompt chaining, review criteria, structured
-output, validation-retry, batching, iterative refinement, confidence
-calibration and provenance — which the Agent SDK owns on your behalf and
-therefore never shows you. Every
+**`examlab/`** is thirteen modules on the request/response layer underneath it —
+the agentic loop, parallel tool use, `tool_choice`, prompt chaining, review
+criteria, structured output, validation-retry, batching, iterative refinement,
+confidence calibration and provenance — which the Agent SDK owns on your behalf
+and therefore never shows you. Every
 module tells you on screen what to set up, what to run, what you should see,
 and what it proves, so the console teaches as much as the docs do.
 
@@ -77,16 +77,16 @@ The markers are not maintained by hand — they are read out of each module's
 `LESSON` block by `playground/lessons.py`, which parses the source with `ast`
 rather than importing it, because importing a demo runs it.
 
-**You can do most of this repo for nothing.** Fourteen of the thirty demos are
-marked free, and a fifteenth — `external_mcp` — is free wherever the server
+**You can do most of this repo for nothing.** Fifteen of the thirty-one demos are
+marked free, and a sixteenth — `external_mcp` — is free wherever the server
 declines to attach, which is why it carries `!` rather than a blank. Free right
 now:
 
-- **All twelve `examlab` modules**, which is the whole of section 7. They make no
-  model call and no network call at all, and they carry the raw loop,
-  `tool_choice`, chaining, review criteria, structured output, validation-retry,
-  batching, refinement, confidence calibration and provenance. If quota is your
-  constraint, start there rather than here.
+- **All thirteen `examlab` modules**, which is the whole of section 7. They make
+  no model call and no network call at all, and they carry the raw loop,
+  parallel tool use, `tool_choice`, chaining, review criteria, structured
+  output, validation-retry, batching, refinement, confidence calibration and
+  provenance. If quota is your constraint, start there rather than here.
 - `basics.check_auth` — makes no model call.
 - `tools_mcp.tool_overhead` — makes no model call either, and it is the one to
   run if you only run one. It measures what a tools array costs before anything
@@ -179,7 +179,7 @@ involved, which is the whole point of the demo that examines it.
 
 ## 4. The thirteen domain demos
 
-Three domains: three demos, six and three. Some are controlled comparisons that
+Three directories: three demos, six and four. Some are controlled comparisons that
 run the same task two ways and print both columns; `triage` is a worked pipeline,
 `context_budget` and `tool_overhead` are instruments, and `external_mcp` is a
 documented failure.
@@ -286,11 +286,15 @@ the tool round trip and hands you typed messages. That is the right trade for
 building an agent and the wrong one for learning what an agent *is*:
 `stop_reason`, `tool_result` blocks, `tool_choice` and `custom_id` have no
 `ClaudeAgentOptions` equivalent, and
-[`docs/tool-surface.md`](docs/tool-surface.md) counts ten of twenty-four official
-tool-use pages as out of reach for that reason. This package is those ten pages,
-written as code you can run.
+[`docs/tool-surface.md`](docs/tool-surface.md) counts eleven of twenty-four
+official tool-use pages as out of reach for that reason. This package is where
+those pages get written as code you can run.
 
-**All eight are free and make no network call by default.** Each one builds real
+That figure said "ten" here until 2026-08-21, after `tool-surface.md` had already
+corrected its own bucket counts and this sentence had not — the same drift the
+page's correction note describes, one file downstream of it.
+
+**All thirteen are free and make no network call by default.** Each one builds real
 requests and validates them against the documented contract; the responses are
 fabricated by this repo and labelled `SCRIPTED`, a provenance state introduced in
 [`src/examlab/CLAUDE.md`](src/examlab/CLAUDE.md) precisely because a scripted
@@ -300,6 +304,7 @@ output and a measured one look identical on a console.
 |-----|------------------|
 | `agentic_loop` | **Read this one first.** The whole loop in nine lines of control flow. The first scripted response carries prose *and* a tool call in the same turn, which is the detail the next module's wrong loops all trip over. Ends by tripping a circuit breaker on purpose, to show why hitting an iteration cap must raise rather than return. |
 | `loop_antipatterns` | The three termination anti-patterns the blueprint names, plus the plumbing bug that causes them, each run against the same script. Two of the four return a confident wrong answer with no error at all. Note *which* two. |
+| `parallel_tool_use` | One turn asking for three tools, and the four ways to answer it. The correct arm costs one round trip instead of three and reports the tool that failed as `is_error` rather than dropping it. Then three rejected requests — and note that no error message mentions parallelism, fan-out, or the number of tools. Two different bugs get the *same* diagnosis. |
 | `chaining` | The same code review as one request, a fixed chain, and a dynamic decomposition, with the request sizes each one actually built. The dynamic arm sends a **larger** request than the single pass — the prose in the file originally claimed otherwise and the numbers won. |
 | `tool_choice` | The four modes, the documented per-request token cost of forcing one, and two loops identical but for one line. The one that never terminates is the one whose loop is correct. |
 | `tool_errors` | Six failures against a structured tool surface and a generic one, with the recovery policy run over both. The generic column reads `guess` six times, including for a successful empty result. |
@@ -333,7 +338,7 @@ anything but an interactive session.
 ## 8. Close the loop
 
 - [`docs/status.md`](docs/status.md) — **read this one.** It is two things,
-  and as of 2026-08-21 every one of its thirty rows was executed on that date
+  and as of 2026-08-21 every one of its thirty-one rows was executed on that date
   after its last edit, so for the first time in the project nothing in it is
   asserting output nobody has seen since editing the file.
   First, the run inventory: every demo, whether it has actually been run, and
@@ -374,9 +379,9 @@ anything but an interactive session.
 - [`docs/tool-surface.md`](docs/tool-surface.md) — every page of the official
   tool-use documentation set, triaged into what this repo demonstrates, what it
   can only observe, and what needs the Messages API and is therefore documented
-  and never faked. Read it before concluding that the D4 demos cover tool use:
-  ten of twenty-four pages are out of reach here, and it says which and why.
-  One of those ten got there by being **demoted** — `web-fetch-tool` was listed
+  and never faked. Read it before concluding that the D2 demos cover tool use:
+  eleven of twenty-four pages are out of reach here, and it says which and why.
+  One of those eleven got there by being **demoted** — `web-fetch-tool` was listed
   as reachable until Claude Code's `WebFetch` turned out not to be the server
   tool of that name. A reference page that only ever gains coverage is one
   nobody is checking.
@@ -423,7 +428,7 @@ Modules that are not demos carry the docstring and no `LESSON`, because a
 `LESSON` promises something you can run and see. `playground/teach.py`,
 `playground/lessons.py` and `tools_mcp/instruments.py` are in that category.
 `instruments.py` is worth opening anyway: it holds the three measuring helpers
-the D4 demos share, and each one documents what it does **not** answer, which is
+the `tools_mcp/` demos share, and each one documents what it does **not** answer, which is
 the part that mattered. All three exist because the obvious version of the
 measurement returned a confident wrong answer first.
 

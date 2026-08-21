@@ -60,8 +60,11 @@ ROW = re.compile(
 # rather than by requiring a match against the registry, because a genuine typo
 # in a demo name must still be caught rather than silently filtered out.
 DEMO_NAME = re.compile(r"`([a-z_]+\.(?!py\b|md\b|json\b|toml\b|lock\b)[a-z_]+)`")
-CAVEATED = re.compile(r"\*\*(\w+) rows are marked", re.I)
-UNCAVEATED = re.compile(r"\*\*The (\w+) rows with no caveat\*\*", re.I)
+# WHY `[\w-]+` and not `\w+`: `\w` excludes the hyphen, so "thirty-one" did not
+# match the heading at all and the check reported "heading reworded?" about a
+# heading nobody had touched. See the history note on WORDS below.
+CAVEATED = re.compile(r"\*\*([\w-]+) rows are marked", re.I)
+UNCAVEATED = re.compile(r"\*\*The ([\w-]+) rows with no caveat\*\*", re.I)
 
 # WHY this table goes past twenty: it stopped at twenty and the repo grew
 # past it. On 2026-08-21 the uncaveated set reached thirty, `stated()`
@@ -69,7 +72,16 @@ UNCAVEATED = re.compile(r"\*\*The (\w+) rows with no caveat\*\*", re.I)
 # a real failure with a misleading diagnosis, because the heading was fine
 # and the vocabulary was not. Extended rather than switched to digits: the
 # prose reads better in words, and a lookup that fails loudly on an unknown
-# word is still the right shape. Add the next decade when it is needed.
+# word is still the right shape.
+#
+# **That fix bought exactly one demo.** Later the same day the set reached
+# thirty-one, and the failure came back identically - same misleading
+# "heading reworded?", same untouched heading - because the next number word
+# after a decade is not another decade, it is a compound. Adding "thirty-one"
+# to this table would have bought one more demo, so the parser below composes
+# instead. The lesson, and the reason this is written up rather than patched
+# again: when a lookup table needs a new entry per increment, the table is the
+# wrong shape and the third entry is the one that should tell you.
 WORDS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
          "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
          "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
@@ -78,13 +90,35 @@ WORDS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
          "fifty": 50}
 
 
+def cardinal(word: str) -> int | None:
+    """A cardinal in digits or in words, hyphenated compounds included.
+
+    Returns None for anything it cannot read, because the caller's only other
+    option is to guess a count, and a wrong count reported confidently is the
+    exact defect this whole script exists to catch.
+
+    WHY the compound is validated rather than just summed: "twenty-thirty"
+    would otherwise parse as 50, and a heading that garbled deserves the loud
+    answer. So a compound must be tens-then-unit, in that order.
+    """
+    if word.isdigit():
+        return int(word)
+    parts = [WORDS.get(p) for p in word.lower().split("-")]
+    if any(p is None for p in parts):
+        return None
+    if len(parts) == 1:
+        return parts[0]
+    if len(parts) == 2 and parts[0] >= 20 and parts[0] % 10 == 0 and 0 < parts[1] < 10:
+        return parts[0] + parts[1]
+    return None
+
+
 def stated(text: str, pattern: re.Pattern[str]) -> int | None:
     """The number word in a heading, as an int, or None if absent."""
     match = pattern.search(text)
     if not match:
         return None
-    word = match.group(1).lower()
-    return WORDS.get(word, int(word) if word.isdigit() else None)
+    return cardinal(match.group(1))
 
 
 def names_after(text: str, pattern: re.Pattern[str]) -> set[str]:

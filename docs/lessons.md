@@ -30,6 +30,7 @@ The order below is the reading order, and it is load-bearing.
 | [`reliability.context_budget`](#reliabilitycontext_budget) | D5 Context Management and Reliability | 1 model call; both context readings are free | yes |
 | [`examlab.agentic_loop`](#examlabagentic_loop) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls (1 live request per iteration if a credential resolves) | yes |
 | [`examlab.loop_antipatterns`](#examlabloop_antipatterns) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls | yes |
+| [`examlab.parallel_tool_use`](#examlabparallel_tool_use) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls (2 live requests per arm if a credential resolves) | yes |
 | [`examlab.chaining`](#examlabchaining) | D1 Agentic Architecture - 1.6, and D4 - 4.6 | free - scripted transport, 0 model calls | yes |
 | [`examlab.tool_choice`](#examlabtool_choice) | D2 Tool Design and MCP Integration - 2.3 | free - responses are synthesised from the request, 0 model calls | yes |
 | [`examlab.tool_errors`](#examlabtool_errors) | D2 Tool Design and MCP Integration - 2.2 | free - 0 model calls | yes |
@@ -204,6 +205,14 @@ The order below is the reading order, and it is load-bearing.
 - **cost** — free - scripted transport, 0 model calls
 - **expect** — Four diagnoses. Two of the wrong loops return a confident wrong answer with no error at all; the other two are caught by the request validator, not by anything the loop itself noticed.
 - **learn** — Every one of these is a termination condition that correlates with being finished instead of meaning it. The dangerous two are the ones that fail silently, and both of those return a STRING - so the caller has no way to tell.
+
+### examlab.parallel_tool_use
+
+- **setup** — Read agentic_loop.py first. This is the same loop with one thing changed: the turn asks for three tools instead of one.
+- **run** — uv run python -m playground.run examlab.parallel_tool_use
+- **cost** — free - scripted transport, 0 model calls (2 live requests per arm if a credential resolves)
+- **expect** — The correct arm finishes in 2 requests with one user message carrying three tool_result blocks, one of them is_error. Then three broken arms, and the rule number each one trips.
+- **learn** — One turn's results go back in one user message, all of them, including the ones that failed. A tool that raised is still owed a result block - is_error=True - because the alternative is an unanswered id, and then the API rejects the whole request rather than just the tool call.
 
 ### examlab.chaining
 
