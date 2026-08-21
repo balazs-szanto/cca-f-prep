@@ -5,7 +5,7 @@ WHY       "Multi-turn" means two different things and people conflate them. Insi
           one connected client, continuity is free. Across process restarts it is
           a deliberate act: you must capture a session id and pass it back. Nobody
           discovers this gently; they discover it when production forgets.
-DOMAIN    D5 Context Management and Reliability
+DOMAIN    D1 Agentic Architecture and Orchestration, task statement 1.7
 TRADEOFF  Resuming replays the transcript, so you re-pay for that history on
           every resumed turn and inherit whatever compaction already discarded.
           It also resumes mistakes: a wrong assumption made in turn 2 is now
@@ -32,7 +32,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D5 Context Management and Reliability",
+    "domain": "D1 Agentic Architecture and Orchestration - 1.7",
     "setup": "basics.check_auth passed. SECRET below is a fact no model can know "
              "from training, which is the only reason step 3 is a fair test.",
     "run": "uv run python -m playground.run reliability.session_resume",

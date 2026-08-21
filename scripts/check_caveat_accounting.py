@@ -63,11 +63,19 @@ DEMO_NAME = re.compile(r"`([a-z_]+\.(?!py\b|md\b|json\b|toml\b|lock\b)[a-z_]+)`"
 CAVEATED = re.compile(r"\*\*(\w+) rows are marked", re.I)
 UNCAVEATED = re.compile(r"\*\*The (\w+) rows with no caveat\*\*", re.I)
 
+# WHY this table goes past twenty: it stopped at twenty and the repo grew
+# past it. On 2026-08-21 the uncaveated set reached thirty, `stated()`
+# returned None for "thirty", and the check reported "heading reworded?" -
+# a real failure with a misleading diagnosis, because the heading was fine
+# and the vocabulary was not. Extended rather than switched to digits: the
+# prose reads better in words, and a lookup that fails loudly on an unknown
+# word is still the right shape. Add the next decade when it is needed.
 WORDS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
          "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
          "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
          "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
-         "nineteen": 19, "twenty": 20}
+         "nineteen": 19, "twenty": 20, "thirty": 30, "forty": 40,
+         "fifty": 50}
 
 
 def stated(text: str, pattern: re.Pattern[str]) -> int | None:

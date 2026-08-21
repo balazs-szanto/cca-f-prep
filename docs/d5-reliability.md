@@ -54,12 +54,17 @@ via `ClaudeSDKClient` do not raise at all, so the handling does not transfer.
 
 - `src/playground/reliability/context_budget.py` — the resting cost, the category
   breakdown, and the auto-compaction threshold, read before and after one turn.
-- `src/playground/reliability/session_resume.py` — continuity inside a session,
-  across a resume, and in a fresh session running identical code.
 - `src/playground/reliability/error_taxonomy.py` — four failure classes provoked
   deliberately, three of them through a model, and sorted by who can recover. The
   environment and argument cases run `mockserver`'s `flaky_search` in-process,
   with the same failure semantics it has over stdio.
+
+Two files in `src/playground/reliability/` are **not** D5 material and are
+labelled D1: `session_resume.py` and `session_fork.py`. The blueprint puts
+session state, resumption and forking in task statement **1.7**, under Agentic
+Architecture, and this repo had `session_resume` filed here on the strength of
+the directory name until 2026-08-21. They stay in this directory because they
+are one subject with each other; see `d1-orchestration.md` for what they show.
 
 ## Common trap
 

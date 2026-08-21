@@ -45,7 +45,8 @@ DEMOS: dict[str, str] = {
     "tools_mcp.tool_overhead": "D2  What a tools array costs before anything calls it",
     "tools_mcp.external_mcp": "D2  Connect to an external MCP server over stdio",
     "tools_mcp.permission_gate": "D2  Block a destructive tool call with can_use_tool",
-    "reliability.session_resume": "D5  Resume a session, and see what does not survive",
+    "reliability.session_resume": "D1  Resume a session, and see what does not survive",
+    "reliability.session_fork": "D1  Fork a baseline twice; test both branches and the parent",
     "reliability.error_taxonomy": "D5  Host, environment, argument and reasoning failures, sorted",
     "reliability.context_budget": "D5  Read real context usage and the compaction threshold",
     # WHY these are in the same registry as the rest, in a package that must not
@@ -59,6 +60,7 @@ DEMOS: dict[str, str] = {
     "examlab.chaining": "D1  Fixed chain vs dynamic decomposition vs multi-pass",
     "examlab.tool_choice": "D2  auto / any / forced, and what each one costs you",
     "examlab.tool_errors": "D2  Error responses an agent can act on, and ones it cannot",
+    "examlab.refinement": "D3  Examples over prose, and when to batch a fix",
     "examlab.review_criteria": "D4  Explicit criteria, then few-shot: what each buys",
     "examlab.structured_output": "D4  tool_use as a schema, and what a schema cannot buy",
     "examlab.validation_retry": "D4  Retry with error feedback, and when retry cannot work",

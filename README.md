@@ -1,11 +1,12 @@
 # Claude Agent SDK Playground
 
-A lab manual in two halves. **`playground/`** is seventeen demos on the Claude
+A lab manual in two halves. **`playground/`** is eighteen demos on the Claude
 Agent SDK, each isolating one architectural decision and printing what it costs.
-**`examlab/`** is eleven modules on the request/response layer underneath it —
+**`examlab/`** is twelve modules on the request/response layer underneath it —
 the agentic loop, `tool_choice`, prompt chaining, review criteria, structured
-output, validation-retry, batching, confidence calibration and provenance —
-which the Agent SDK owns on your behalf and therefore never shows you. Every
+output, validation-retry, batching, iterative refinement, confidence
+calibration and provenance — which the Agent SDK owns on your behalf and
+therefore never shows you. Every
 module tells you on screen what to set up, what to run, what you should see,
 and what it proves, so the console teaches as much as the docs do.
 
@@ -76,16 +77,16 @@ The markers are not maintained by hand — they are read out of each module's
 `LESSON` block by `playground/lessons.py`, which parses the source with `ast`
 rather than importing it, because importing a demo runs it.
 
-**You can do most of this repo for nothing.** Thirteen of the twenty-eight demos are
-marked free, and a fourteenth — `external_mcp` — is free wherever the server
+**You can do most of this repo for nothing.** Fourteen of the thirty demos are
+marked free, and a fifteenth — `external_mcp` — is free wherever the server
 declines to attach, which is why it carries `!` rather than a blank. Free right
 now:
 
-- **All eleven `examlab` modules**, which is the whole of section 7. They make no
+- **All twelve `examlab` modules**, which is the whole of section 7. They make no
   model call and no network call at all, and they carry the raw loop,
   `tool_choice`, chaining, review criteria, structured output, validation-retry,
-  batching, confidence calibration and provenance. If quota is your constraint,
-  start there rather than here.
+  batching, refinement, confidence calibration and provenance. If quota is your
+  constraint, start there rather than here.
 - `basics.check_auth` — makes no model call.
 - `tools_mcp.tool_overhead` — makes no model call either, and it is the one to
   run if you only run one. It measures what a tools array costs before anything
@@ -100,12 +101,12 @@ now:
   which is the whole set of banners in one page.
 - Testing the `PreToolUse` hook directly (section 6).
 
-That leaves fourteen `$` demos, all of them under `playground/`, which together
+That leaves fifteen `$` demos, all of them under `playground/`, which together
 cost a few cents against your subscription quota. They pin `claude-haiku-4-5` and
 cap `max_turns`, and each one names its own cost in its banner before it runs.
 If these counts ever disagree with `--list`, believe `--list`: it derives them
 from each module's `LESSON` block, and this paragraph is maintained by hand. The
-three numbers here — 13, 1 and 14 — were checked against `--list` on 2026-08-21
+three numbers here — 14, 1 and 15 — were checked against `--list` on 2026-08-21
 by counting its markers, which is the only way this paragraph gets checked at all.
 
 ## 3. Ground yourself
@@ -176,7 +177,7 @@ you watch that protocol directly, for free, which is the fastest way to make it
 concrete. The third case is not a variant of the other two: nothing you write is
 involved, which is the whole point of the demo that examines it.
 
-## 4. The twelve domain demos
+## 4. The thirteen domain demos
 
 Three domains: three demos, six and three. Some are controlled comparisons that
 run the same task two ways and print both columns; `triage` is a worked pipeline,
@@ -188,8 +189,8 @@ because the docs pose the question the numbers answer.
 **This section is D1, D2 and D5 only, and the omissions are deliberate rather
 than oversights.** The five grounding demos are section 3, and they now spread
 across four domains rather than sitting in a bucket. D3 is section 6, because
-none of it runs through the dispatcher. 5 demos in section 3 plus 12 here is all
-17. D4 has no subsection here — none of its demos is a controlled comparison
+none of it runs through the dispatcher. 5 demos in section 3 plus 13 here is all
+18. D4 has no subsection here — none of its demos is a controlled comparison
 worth a table — but it does have a document now,
 [`docs/d4-prompt-output.md`](docs/d4-prompt-output.md), and four modules in
 section 7.
@@ -207,6 +208,8 @@ and the honest report of which demos do not fit the domain they landed in.
 | `orchestration.triage` | `$` | **Read this one first.** A three-stage decomposition that works, with the reasoning written at each boundary. Watch which requests never reach the expensive stage, and which stage turned out to be the unreliable one. |
 | `orchestration.workflow_vs_agent` | `$` | The same classification as a scripted workflow and as an agent. The workflow column is the **more expensive** one — reproduced across runs at roughly 3.5x the agent's cost, with identical labels. That contradicts the standard advice. Work out why before reading the closing block. |
 | `orchestration.subagent` | `$` | The same summarising job inline and delegated, with a delta column. Every delta is positive: you are paying for context isolation on a task with nothing to isolate. |
+| `reliability.session_resume` | `$` | The same question in a live session, a resumed session and a fresh one. Steps 2 and 3 run identical code; one string differs. Compare the token counts. Filed under D1 since 2026-08-21 — session state is task statement 1.7, not D5. |
+| `reliability.session_fork` | `$` | A baseline forked twice, then the parent re-resumed. Three isolation claims tested separately: what a fork inherits, what it hides from its sibling, and whether it writes back into its parent. A fork gets a new session id; a plain resume does not; every branch turn re-pays the baseline. |
 
 ### D2 — Tool Design and MCP Integration · `docs/d2-tools-mcp.md`
 
@@ -225,7 +228,6 @@ and the honest report of which demos do not fit the domain they landed in.
 |-----|-------|------------------|
 | `reliability.context_budget` | `$` | An instrument, not an argument: the resting cost (~12,400 tokens before you type), the threshold, and the headroom. Note that `Free space` and the real headroom are different numbers. It says out loud that compaction did **not** fire and what would be needed to make it. |
 | `reliability.error_taxonomy` | `$` | Four failure classes, only one of which is a Python exception. That is why one `try/except` around the agent call is the wrong instinct. |
-| `reliability.session_resume` | `$` | The same question in a live session, a resumed session and a fresh one. Steps 2 and 3 run identical code; one string differs. Compare the token counts. |
 
 ## 5. The mock MCP server (free)
 
@@ -305,6 +307,7 @@ output and a measured one look identical on a console.
 | `validation_retry` | Three documents, all three reported valid by attempt two. The third validated by **inventing** a value the source never contained, after being told not to infer. |
 | `batches` | The four properties, and the arithmetic that decides whether the 50% is available to you at all: your submission gap plus the 24-hour bound, against the SLA you promised. |
 | `review_criteria` | Three prompts over one labelled answer key. "Be conservative" and "only report high-confidence findings" are already in the worst-scoring prompt. Precision moves 25% to 80% on the categorical list, and one false positive survives all three arms on purpose. |
+| `refinement` | Examples against a prose spec on the same transformation, then the round-trip arithmetic for interacting fixes: 5 dependency edges make sequencing cost 9 against 2 batched — and the independent set inverts the recommendation, because reviewability costs more than a round trip. |
 | `confidence_routing` | An aggregate accuracy hiding two independent segment failures, and a routing threshold that reviews 30% of the volume while catching none of the errors. |
 | `provenance` | The same six findings through a lossy synthesis and a preserving one: 0 of 6 attributable against 5 of 6. Then two numeric disagreements that read identically in prose, one of which is just five years apart. |
 
@@ -329,7 +332,10 @@ anything but an interactive session.
 
 ## 8. Close the loop
 
-- [`docs/status.md`](docs/status.md) — **read this one.** It is two things.
+- [`docs/status.md`](docs/status.md) — **read this one.** It is two things,
+  and as of 2026-08-21 every one of its thirty rows was executed on that date
+  after its last edit, so for the first time in the project nothing in it is
+  asserting output nobody has seen since editing the file.
   First, the run inventory: every demo, whether it has actually been run, and
   what is still unverified, including which files were edited after the run that
   justifies their row. Second, and the reason to open it if you are mapping this

@@ -11,11 +11,11 @@ table and for the earlier labels these replaced.
 
 | $1 | Weight | Read these |
 |----|--------|------------|
-| `d1` | 27% | `docs/d1-orchestration.md`, `src/playground/orchestration/`, `src/playground/basics/hello.py`, `src/examlab/agentic_loop.py`, `src/examlab/loop_antipatterns.py`, `src/examlab/chaining.py` |
+| `d1` | 27% | `docs/d1-orchestration.md`, `src/playground/orchestration/`, `src/playground/basics/hello.py`, `src/playground/reliability/session_resume.py`, `src/playground/reliability/session_fork.py`, `src/examlab/agentic_loop.py`, `src/examlab/loop_antipatterns.py`, `src/examlab/chaining.py` |
 | `d2` | 18% | `docs/d2-tools-mcp.md`, `src/playground/tools_mcp/`, `src/playground/basics/tools.py`, `src/mockserver/`, `src/examlab/tool_choice.py`, `src/examlab/tool_errors.py` |
-| `d3` | 20% | `docs/d3-claude-code.md`, `.claude/` including `skills/` and `rules/`, both `CLAUDE.md` files, `src/playground/basics/check_auth.py` |
+| `d3` | 20% | `docs/d3-claude-code.md`, `.claude/` including `skills/` and `rules/`, both `CLAUDE.md` files, `src/examlab/refinement.py`, `src/playground/basics/check_auth.py` |
 | `d4` | 20% | `docs/d4-prompt-output.md`, `src/examlab/review_criteria.py`, `src/playground/basics/structured.py`, `src/examlab/structured_output.py`, `src/examlab/validation_retry.py`, `src/examlab/batches.py`, `src/playground/basics/prompt_shape.py` |
-| `d5` | 15% | `docs/d5-reliability.md`, `src/playground/reliability/`, `src/examlab/tool_errors.py`, `src/examlab/confidence_routing.py`, `src/examlab/provenance.py` |
+| `d5` | 15% | `docs/d5-reliability.md`, `src/playground/reliability/` **except the two session demos, which are D1**, `src/examlab/tool_errors.py`, `src/examlab/confidence_routing.py`, `src/examlab/provenance.py` |
 
 All five domains now have a `docs/dN-*.md`. `d4-prompt-output.md` was the last
 one written, on 2026-08-21, once the domain had enough material to justify it —

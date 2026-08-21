@@ -24,7 +24,8 @@ The order below is the reading order, and it is load-bearing.
 | [`tools_mcp.tool_overhead`](#tools_mcptool_overhead) | D2 Tool Design and MCP Integration | free - 0 model calls, every reading is a control request | yes |
 | [`tools_mcp.external_mcp`](#tools_mcpexternal_mcp) | D2 Tool Design and MCP Integration | free if the server cannot be attached, since it stops before the model call; 1 model call if it can | known issue |
 | [`tools_mcp.permission_gate`](#tools_mcppermission_gate) | D2 Tool Design and MCP Integration | 1 model call | yes |
-| [`reliability.session_resume`](#reliabilitysession_resume) | D5 Context Management and Reliability | 4 model calls across three sessions | yes |
+| [`reliability.session_resume`](#reliabilitysession_resume) | D1 Agentic Architecture and Orchestration - 1.7 | 4 model calls across three sessions | yes |
+| [`reliability.session_fork`](#reliabilitysession_fork) | D1 Agentic Architecture and Orchestration - 1.7 | 4 model calls: one baseline, one per fork, one re-resume of the parent | yes |
 | [`reliability.error_taxonomy`](#reliabilityerror_taxonomy) | D5 Context Management and Reliability | 3 model calls; case 1 is free | yes |
 | [`reliability.context_budget`](#reliabilitycontext_budget) | D5 Context Management and Reliability | 1 model call; both context readings are free | yes |
 | [`examlab.agentic_loop`](#examlabagentic_loop) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls (1 live request per iteration if a credential resolves) | yes |
@@ -32,6 +33,7 @@ The order below is the reading order, and it is load-bearing.
 | [`examlab.chaining`](#examlabchaining) | D1 Agentic Architecture - 1.6, and D4 - 4.6 | free - scripted transport, 0 model calls | yes |
 | [`examlab.tool_choice`](#examlabtool_choice) | D2 Tool Design and MCP Integration - 2.3 | free - responses are synthesised from the request, 0 model calls | yes |
 | [`examlab.tool_errors`](#examlabtool_errors) | D2 Tool Design and MCP Integration - 2.2 | free - 0 model calls | yes |
+| [`examlab.refinement`](#examlabrefinement) | D3 Claude Code Configuration and Workflows - 3.5 | free - 0 model calls | yes |
 | [`examlab.review_criteria`](#examlabreview_criteria) | D4 Prompt Engineering and Structured Output - 4.1 and 4.2 | free - 0 model calls, findings are fabricated per arm | yes |
 | [`examlab.structured_output`](#examlabstructured_output) | D4 Prompt Engineering and Structured Output - 4.3 | free - 0 model calls, extractions are fabricated | yes |
 | [`examlab.validation_retry`](#examlabvalidation_retry) | D4 Prompt Engineering and Structured Output - 4.4 | free - 0 model calls | yes |
@@ -163,6 +165,14 @@ The order below is the reading order, and it is load-bearing.
 - **expect** — Step 1 states the fact and recalls it. Step 2, a brand new client given the session id, recalls it too, at a visibly higher token count. Step 3, identical code without the id, does not know it.
 - **learn** — 'Multi-turn' means two unrelated things: continuity inside one open client is free, and continuity across a process boundary is a deliberate act that replays - and re-bills - the whole transcript.
 
+### reliability.session_fork
+
+- **setup** — basics.check_auth passed, and read session_resume.py first - this demo is the answer to the problem that one ends on.
+- **run** — uv run python -m playground.run reliability.session_fork
+- **cost** — 4 model calls: one baseline, one per fork, one re-resume of the parent
+- **expect** — Both forks know BASELINE. Fork B does not know BRANCH_A. The re-resumed parent does not know BRANCH_A either - which is the assertion worth the fourth call. Watch the session ids: a fork gets a new one, a plain resume does not.
+- **learn** — A fork inherits the transcript and then diverges: siblings cannot see each other and neither writes back into the parent. It is copy-on-write for context - and you still re-pay the baseline on every branch turn, so the saving is on the analysis, not the run.
+
 ### reliability.error_taxonomy
 
 - **setup** — basics.check_auth passed. Case 1 needs no network and no quota; cases 2 to 4 each make one call. The mock backend is deterministic - its first search per process always fails, so restart to re-arm.
@@ -218,6 +228,14 @@ The order below is the reading order, and it is load-bearing.
 - **cost** — free - 0 model calls
 - **expect** — Six cases against both tool surfaces. The structured surface retries exactly one of them and explains the rest; the generic surface retries all six or none, because it cannot tell.
 - **learn** — An error is retryable, or a policy violation, or a bad argument, or a missing permission - and a valid empty result is none of those. Collapsing them into one string does not lose detail, it loses the decision.
+
+### examlab.refinement
+
+- **setup** — Read PROSE_SPEC and EXAMPLES, then decide which of the four TRICKY inputs each one determines the answer for.
+- **run** — uv run python -m playground.run examlab.refinement
+- **cost** — free - 0 model calls
+- **expect** — The prose spec settles none of four edge cases; three examples settle three and leave a range undetermined. Then a fix graph with 5 dependency edges where sequencing costs 9 round trips against 2, and a second graph where batching is wrong.
+- **learn** — A prose spec is ambiguous exactly where you did not think to be precise, and examples are cheaper than the precision. Batch fixes that touch the same code and sequence fixes that do not - the test is the dependency, never the count.
 
 ### examlab.review_criteria
 

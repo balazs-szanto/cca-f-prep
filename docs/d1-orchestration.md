@@ -77,6 +77,16 @@ second system prompt for isolation you had no use for.
   task both ways, with turns, tokens, cache, latency and cost side by side.
 - `src/playground/orchestration/subagent.py` — delegation measured on a task too
   small to justify it, so the overhead is visible rather than asserted.
+- `src/examlab/agentic_loop.py` and `loop_antipatterns.py` — task statement 1.1,
+  the loop itself. `query()` owns termination, so the Agent SDK demos above
+  cannot show `stop_reason`; these do, against a fabricated transport.
+- `src/examlab/chaining.py` — 1.6. A fixed chain against a plan that decides its
+  own steps, with the request sizes each one actually built.
+- `src/playground/reliability/session_resume.py` and `session_fork.py` — 1.7.
+  They live in `reliability/` because they are one subject with each other, and
+  they are D1 because the blueprint puts session state here. `session_fork`
+  tests three separate isolation claims: what a fork inherits, what it hides
+  from its sibling, and whether it writes back into its parent.
 
 ## Common trap
 

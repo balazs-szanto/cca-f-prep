@@ -59,6 +59,7 @@ useful thing on this page if you are studying rather than reading.
 | `basics.check_auth` | D3 | Its subject is **explicitly out of scope**. The guide's out-of-scope list names "Claude API authentication, billing, or account management" and "OAuth, API key rotation, or authentication protocol details". The demo is load-bearing for this repo's cost discipline and answers no examinable question. Run it; do not revise it. |
 | `basics.prompt_shape` | D4 | Filed there on the domain's *name*. Its content — instruction/data delimiting against prompt injection — matches **none** of D4's six task statements (explicit criteria, few-shot, structured output, validation-retry, batching, multi-pass review). Injection resistance is not in the blueprint at all. |
 | `basics.hello` | D1 | Genuinely D1, but it teaches the **Agent SDK's** loop, where `query()` owns termination. Task statement 1.1 tests `stop_reason` control flow, which this demo cannot show. `examlab/agentic_loop.py` is the one that answers 1.1. |
+| `reliability.session_resume` | D5 until 2026-08-21, now **D1** | Filed under D5 on the strength of its directory name. Session state, resumption and forking are task statement **1.7**, under Agentic Architecture. Relabelled; the file stayed in `reliability/` because it is one subject with `session_fork.py`. |
 | `basics.structured` | D4 | Adjacent, not equal. `output_format` is an Agent SDK feature; task statement 4.3 tests `tool_use` with a JSON schema. Different mechanism, same goal. `examlab/structured_output.py` covers the examinable one. |
 
 ### Task statements with no coverage anywhere in this repo
@@ -67,20 +68,24 @@ Listed because a coverage table read without them overstates what is here. This
 list was twice as long on the morning of 2026-08-21; what closed is recorded
 below it.
 
-- **3.5 — iterative refinement.** Input/output examples, test-driven iteration,
-  the interview pattern, batching interacting fixes. No demo, and the reason is
-  written up in `d3-claude-code.md`: every technique in it is a property of how a
-  person drives a session, and this repo's bar for a demo is a checkable outcome
-  printed to a console. Documented there instead.
-- **1.7 (partial) — forking.** `reliability/session_resume.py` covers resumption;
-  `fork_session` is never used. This one is a genuine gap rather than a
-  deliberate omission — it needs quota, not a new idea.
+- **3.5 (partial) — test-driven iteration and the interview pattern.** Two of
+  the four techniques in that statement produce a transcript rather than an
+  artifact, and this repo cannot score a transcript. They are written up in
+  `d3-claude-code.md`. The other two — examples over prose, and batching
+  against sequencing fixes — are in `examlab/refinement.py`, where the
+  round-trip count turns out to be a calculation over a dependency graph.
 - **Live confirmation of anything in `src/examlab/`.** Eleven modules run against
   fabricated fixtures. The control flow and the arithmetic are real; no claim
   about how a model responds is measured. `docs/status.md` lists this per row.
 
 ### What closed on 2026-08-21, and how
 
+- **1.7 forking** — `reliability/session_fork.py`, run for real. A fork
+  inherits the baseline, cannot see its sibling, and does not write back into
+  its parent; all three were tested separately and all three held. A fork gets
+  a new session id, a plain resume keeps the old one, and every branch turn
+  re-pays the baseline (18,783 tokens against the parent's 18,930).
+- **3.5, in part** — `examlab/refinement.py`.
 - **3.2 skills** — `.claude/skills/audit-claims/` and `.claude/skills/new-demo/`,
   between them exercising `context: fork`, `allowed-tools` in a read-only and a
   write-limited form, and `argument-hint`. Never invoked, so the front matter is
