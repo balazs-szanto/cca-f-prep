@@ -59,6 +59,17 @@ def exchange(index: int, *, sent: str, got: str, stop_reason: str) -> None:
     print(f"      stop     {stop_reason}")
 
 
+def paragraph(text: str, indent: str = "  ") -> None:
+    """Print prose wrapped to WIDTH, so a long field does not break mid-word.
+
+    Exists because provenance.py printed a verdict by slicing it at a fixed
+    column, which cut "disagreement" in half. A fixed slice is the obvious way
+    to wrap and is wrong for any text you did not write to that width.
+    """
+    for line in _wrap(text):
+        print(f"{indent}{line}")
+
+
 def table(headers: tuple[str, ...], rows: list[tuple[str, ...]]) -> None:
     """A left-aligned table sized to its content. No dependencies."""
     # WHY: the list form rather than max(a, *b). With no rows, max(int) raises

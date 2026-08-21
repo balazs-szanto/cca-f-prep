@@ -59,9 +59,12 @@ DEMOS: dict[str, str] = {
     "examlab.chaining": "D1  Fixed chain vs dynamic decomposition vs multi-pass",
     "examlab.tool_choice": "D2  auto / any / forced, and what each one costs you",
     "examlab.tool_errors": "D2  Error responses an agent can act on, and ones it cannot",
+    "examlab.review_criteria": "D4  Explicit criteria, then few-shot: what each buys",
     "examlab.structured_output": "D4  tool_use as a schema, and what a schema cannot buy",
     "examlab.validation_retry": "D4  Retry with error feedback, and when retry cannot work",
     "examlab.batches": "D4  Message Batches: shape, custom_id, and the SLA arithmetic",
+    "examlab.confidence_routing": "D5  Aggregate accuracy hides its worst segment",
+    "examlab.provenance": "D5  Claim-source mappings, and a conflict vs a date",
 }
 
 # WHY a boundary in the list rather than a second command: everything below this

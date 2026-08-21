@@ -2,21 +2,22 @@
 
 A lab manual in two halves. **`playground/`** is seventeen demos on the Claude
 Agent SDK, each isolating one architectural decision and printing what it costs.
-**`examlab/`** is eight modules on the request/response layer underneath it —
-the agentic loop, `tool_choice`, prompt chaining, structured output,
-validation-retry, batching — which the Agent SDK owns on your behalf and
-therefore never shows you. Every module tells you on screen what to set up, what
-to run, what you should see, and what it proves, so the console teaches as much
-as the docs do.
+**`examlab/`** is eleven modules on the request/response layer underneath it —
+the agentic loop, `tool_choice`, prompt chaining, review criteria, structured
+output, validation-retry, batching, confidence calibration and provenance —
+which the Agent SDK owns on your behalf and therefore never shows you. Every
+module tells you on screen what to set up, what to run, what you should see,
+and what it proves, so the console teaches as much as the docs do.
 
-The two halves have different auth rules and different domain numbering, and both
-differences are deliberate. See section 7.
+The two halves share one dispatcher and one set of domain labels. What differs
+is the auth rule, and that difference is deliberate — see section 7.
 
-This repo describes what each demo demonstrates. It does not claim what any exam
-covers — but the official blueprint is now in
-[`docs/domain-map.md`](docs/domain-map.md), and the mapping between it and this
-repo's own labels is **not** the identity function. Read that table before
-trusting a `DOMAIN` line.
+Every `DOMAIN` label in the repo is the official CCA-F blueprint's, as of the
+relabel on 2026-08-21. Before that they were the author's own and two of the
+five numbers were transposed, so anything written earlier disagrees;
+[`docs/domain-map.md`](docs/domain-map.md) carries the old-to-new map. Read it
+for the gap report too: which demos land in a domain the exam does not test
+there, and which task statements have a written reason for having no demo.
 
 ## What this repo does, and what it does not
 
@@ -75,15 +76,16 @@ The markers are not maintained by hand — they are read out of each module's
 `LESSON` block by `playground/lessons.py`, which parses the source with `ast`
 rather than importing it, because importing a demo runs it.
 
-**You can do most of this repo for nothing.** Ten of the twenty-five demos are
-marked free, and an eleventh — `external_mcp` — is free wherever the server
+**You can do most of this repo for nothing.** Thirteen of the twenty-eight demos are
+marked free, and a fourteenth — `external_mcp` — is free wherever the server
 declines to attach, which is why it carries `!` rather than a blank. Free right
 now:
 
-- **All eight `examlab` modules**, which is the whole of section 7. They make no
-  model call and no network call at all, and they are the material on the raw
-  loop, `tool_choice`, chaining, structured output, validation-retry and
-  batching. If your quota is the constraint, start there rather than here.
+- **All eleven `examlab` modules**, which is the whole of section 7. They make no
+  model call and no network call at all, and they carry the raw loop,
+  `tool_choice`, chaining, review criteria, structured output, validation-retry,
+  batching, confidence calibration and provenance. If quota is your constraint,
+  start there rather than here.
 - `basics.check_auth` — makes no model call.
 - `tools_mcp.tool_overhead` — makes no model call either, and it is the one to
   run if you only run one. It measures what a tools array costs before anything
@@ -103,7 +105,7 @@ cost a few cents against your subscription quota. They pin `claude-haiku-4-5` an
 cap `max_turns`, and each one names its own cost in its banner before it runs.
 If these counts ever disagree with `--list`, believe `--list`: it derives them
 from each module's `LESSON` block, and this paragraph is maintained by hand. The
-three numbers here — 10, 1 and 14 — were checked against `--list` on 2026-08-21
+three numbers here — 13, 1 and 14 — were checked against `--list` on 2026-08-21
 by counting its markers, which is the only way this paragraph gets checked at all.
 
 ## 3. Ground yourself
@@ -187,9 +189,10 @@ because the docs pose the question the numbers answer.
 than oversights.** The five grounding demos are section 3, and they now spread
 across four domains rather than sitting in a bucket. D3 is section 6, because
 none of it runs through the dispatcher. 5 demos in section 3 plus 12 here is all
-17. D4 has no subsection here at all — its examinable half is section 7, and
-what is missing from it is listed in
-[`docs/domain-map.md`](docs/domain-map.md).
+17. D4 has no subsection here — none of its demos is a controlled comparison
+worth a table — but it does have a document now,
+[`docs/d4-prompt-output.md`](docs/d4-prompt-output.md), and four modules in
+section 7.
 
 **All D-numbers in this repo are the official blueprint's**, as of the relabel on
 2026-08-21. They were not before: two were transposed and one had no counterpart,
@@ -301,6 +304,9 @@ output and a measured one look identical on a console.
 | `structured_output` | An extraction that passes the schema, passes the cross-field check, and is wrong about money. Then which layer catches what, and what none of them catch. |
 | `validation_retry` | Three documents, all three reported valid by attempt two. The third validated by **inventing** a value the source never contained, after being told not to infer. |
 | `batches` | The four properties, and the arithmetic that decides whether the 50% is available to you at all: your submission gap plus the 24-hour bound, against the SLA you promised. |
+| `review_criteria` | Three prompts over one labelled answer key. "Be conservative" and "only report high-confidence findings" are already in the worst-scoring prompt. Precision moves 25% to 80% on the categorical list, and one false positive survives all three arms on purpose. |
+| `confidence_routing` | An aggregate accuracy hiding two independent segment failures, and a routing threshold that reviews 30% of the volume while catching none of the errors. |
+| `provenance` | The same six findings through a lossy synthesis and a preserving one: 0 of 6 attributable against 5 of 6. Then two numeric disagreements that read identically in prose, one of which is just five years apart. |
 
 **The auth rule is narrowed here, not repealed.** No module requires a
 credential, none names a credential variable, and `anthropic` is an optional

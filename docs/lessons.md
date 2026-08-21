@@ -32,9 +32,12 @@ The order below is the reading order, and it is load-bearing.
 | [`examlab.chaining`](#examlabchaining) | D1 Agentic Architecture - 1.6, and D4 - 4.6 | free - scripted transport, 0 model calls | yes |
 | [`examlab.tool_choice`](#examlabtool_choice) | D2 Tool Design and MCP Integration - 2.3 | free - responses are synthesised from the request, 0 model calls | yes |
 | [`examlab.tool_errors`](#examlabtool_errors) | D2 Tool Design and MCP Integration - 2.2 | free - 0 model calls | yes |
+| [`examlab.review_criteria`](#examlabreview_criteria) | D4 Prompt Engineering and Structured Output - 4.1 and 4.2 | free - 0 model calls, findings are fabricated per arm | yes |
 | [`examlab.structured_output`](#examlabstructured_output) | D4 Prompt Engineering and Structured Output - 4.3 | free - 0 model calls, extractions are fabricated | yes |
 | [`examlab.validation_retry`](#examlabvalidation_retry) | D4 Prompt Engineering and Structured Output - 4.4 | free - 0 model calls | yes |
 | [`examlab.batches`](#examlabbatches) | D4 Prompt Engineering and Structured Output - 4.5 | free - 0 model calls | yes |
+| [`examlab.confidence_routing`](#examlabconfidence_routing) | D5 Context Management and Reliability - 5.5 | free - 0 model calls | yes |
+| [`examlab.provenance`](#examlabprovenance) | D5 Context Management and Reliability - 5.6 | free - 0 model calls | yes |
 
 ## Every lesson in full
 
@@ -216,6 +219,14 @@ The order below is the reading order, and it is load-bearing.
 - **expect** — Six cases against both tool surfaces. The structured surface retries exactly one of them and explains the rest; the generic surface retries all six or none, because it cannot tell.
 - **learn** — An error is retryable, or a policy violation, or a bad argument, or a missing permission - and a valid empty result is none of those. Collapsing them into one string does not lose detail, it loses the decision.
 
+### examlab.review_criteria
+
+- **setup** — Read the three PROMPTS in full before the table. They are the point; the scores only rank them.
+- **run** — uv run python -m playground.run examlab.review_criteria
+- **cost** — free - 0 model calls, findings are fabricated per arm
+- **expect** — Three arms scored on the same nine-item answer key: 25%, 80% and 83% precision, 20%, 80% and 100% recall. The vague arm already contains two confidence hedges and still scores worst. One false positive survives all three arms.
+- **learn** — Vague instructions and confidence hedges do not move precision, because they do not tell the model what counts. Categorical criteria move it. Few-shot examples add generalisation to cases no criterion named, which is a different purchase from precision.
+
 ### examlab.structured_output
 
 - **setup** — Read SCHEMA field by field and ask of each one: required or nullable, and what happens if the document is silent about it?
@@ -239,4 +250,20 @@ The order below is the reading order, and it is load-bearing.
 - **cost** — free - 0 model calls
 - **expect** — The four properties, a request array with custom_ids, a resubmission that sends 5 requests instead of 100, and a cadence table where one of four windows misses a 30-hour SLA and one meets it with exactly zero margin.
 - **learn** — Batch is a latency decision wearing a cost badge. Worst case is your submission gap PLUS the processing window, so the cadence is what you design; and no multi-turn tool calling means an agentic loop cannot be batched at all, only its individual turns.
+
+### examlab.confidence_routing
+
+- **setup** — None. Before the table, guess what fraction of the errors the model marked high-confidence.
+- **run** — uv run python -m playground.run examlab.confidence_routing
+- **cost** — free - 0 model calls
+- **expect** — 85% aggregate accuracy, then one document type at 60% and one field at 60%. Then a sweep where routing everything below 0.90 to a human reviews 30% of the volume and catches NONE of the three errors, because two of them are above 0.95.
+- **learn** — An aggregate accuracy is a weighted mean and hides its worst segment by construction. Confidence is a number with no units until a labelled set gives it one - and the threshold you pick buys review volume, not correctness.
+
+### examlab.provenance
+
+- **setup** — Read FINDINGS and note which fields are not the claim itself. Those are the ones a summariser drops.
+- **run** — uv run python -m playground.run examlab.provenance
+- **cost** — free - 0 model calls
+- **expect** — Two synthesis arms over the same six findings: one keeps 0 of 6 attributions, the other keeps 5 - the sixth has no source by design. Then two disagreements that look identical in prose and are not: one is a dispute, one is five years apart.
+- **learn** — Attribution dies in the summarising step, so require the mapping as a field rather than asking for it in prose. And a date field is what separates a contested finding from a stale one; without it every temporal difference reads as a contradiction.
 

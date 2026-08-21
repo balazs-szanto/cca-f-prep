@@ -16,7 +16,7 @@ third-party study site was consulted, and none should be used to amend this tabl
 | 1 | Agentic Architecture & Orchestration | 27% | `d1-orchestration.md` |
 | 2 | Tool Design & MCP Integration | 18% | `d2-tools-mcp.md` |
 | 3 | Claude Code Configuration & Workflows | 20% | `d3-claude-code.md` |
-| 4 | Prompt Engineering & Structured Output | 20% | *none — see gaps below* |
+| 4 | Prompt Engineering & Structured Output | 20% | `d4-prompt-output.md` |
 | 5 | Context Management & Reliability | 15% | `d5-reliability.md` |
 
 Exam shape, same source: 60 items, 120 minutes, four scenarios drawn from a bank
@@ -63,29 +63,47 @@ useful thing on this page if you are studying rather than reading.
 
 ### Task statements with no coverage anywhere in this repo
 
-Listed because a coverage table read without them overstates what is here.
+Listed because a coverage table read without them overstates what is here. This
+list was twice as long on the morning of 2026-08-21; what closed is recorded
+below it.
 
-- **3.2 — skills.** There is no `.claude/skills/` directory. `context: fork`,
-  `allowed-tools` and `argument-hint` frontmatter are untouched, and the guide
-  names all three. This is the largest single gap, in a 20% domain.
-- **3.3 — path-specific rules.** There is no `.claude/rules/` directory, so
-  YAML `paths` frontmatter and glob-scoped convention loading are absent. Two of
-  the guide's twelve sample questions turn on this.
 - **3.5 — iterative refinement.** Input/output examples, test-driven iteration,
-  the interview pattern. Nothing.
-- **3.6 — CI/CD integration.** `-p`/`--print`, `--output-format json`,
-  `--json-schema`. Nothing.
-- **4.1 and 4.2 — explicit criteria and few-shot prompting.** Nothing, and
-  together they are two of D4's six statements.
+  the interview pattern, batching interacting fixes. No demo, and the reason is
+  written up in `d3-claude-code.md`: every technique in it is a property of how a
+  person drives a session, and this repo's bar for a demo is a checkable outcome
+  printed to a console. Documented there instead.
 - **1.7 (partial) — forking.** `reliability/session_resume.py` covers resumption;
-  `fork_session` is never used.
-- **5.5 and 5.6 — human review and provenance.** Confidence calibration,
-  stratified sampling, claim-source mappings, conflict annotation. Nothing.
+  `fork_session` is never used. This one is a genuine gap rather than a
+  deliberate omission — it needs quota, not a new idea.
+- **Live confirmation of anything in `src/examlab/`.** Eleven modules run against
+  fabricated fixtures. The control flow and the arithmetic are real; no claim
+  about how a model responds is measured. `docs/status.md` lists this per row.
 
-Rough shape of it: D1, D2 and D5 are well covered, D3 is covered where it is
-inert and absent where it is examinable, and D4 has the examinable half in
-`examlab/` and the prompt-engineering half missing. `docs/status.md` carries the
-per-domain assessment; this list is the blueprint-side view of the same thing.
+### What closed on 2026-08-21, and how
+
+- **3.2 skills** — `.claude/skills/audit-claims/` and `.claude/skills/new-demo/`,
+  between them exercising `context: fork`, `allowed-tools` in a read-only and a
+  write-limited form, and `argument-hint`. Never invoked, so the front matter is
+  DOCUMENTED.
+- **3.3 path rules** — `.claude/rules/checks.md` (globs spanning two
+  directories) and `.claude/rules/generated-docs.md` (three named files inside a
+  directory whose others share none of the rules). One of these has been
+  **observed loading**; see `docs/status.md`.
+- **3.6 CI/CD** — documented in `d3-claude-code.md` with the flags, the schema
+  argument, and the two mistakes that are not about flags. No pipeline here.
+- **4.1 explicit criteria and 4.2 few-shot** — `examlab/review_criteria.py`. The
+  earlier refusal to demo these was wrong in one specific way: what cannot be
+  checked for free is a model's response, and what can be checked exactly is
+  precision and recall against a labelled key.
+- **5.5 confidence calibration** — `examlab/confidence_routing.py`.
+- **5.6 provenance** — `examlab/provenance.py`.
+
+Rough shape of it now: every domain has material and a document, and every
+task statement has either a demo or a written reason it does not. What is
+thin is no longer coverage but *evidence* — the D3 configuration is almost
+entirely unobserved, and everything in `examlab/` is arithmetic over
+fixtures. `docs/status.md` carries the per-domain assessment; this list is
+the blueprint-side view of the same thing.
 
 ## The defect this page recorded before the guide arrived, and how it turned out
 

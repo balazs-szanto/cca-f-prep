@@ -43,16 +43,28 @@ old-to-new map, and which demos land in a domain the exam does not test there.
 | `examlab.chaining` | RAN CLEAN | 2026-08-21 | 1 / 4 / 3 requests and largest prompts of 468 / 378 / 549 characters. The dynamic arm's largest request **exceeds** the single pass, which the file's first draft claimed the opposite of. |
 | `examlab.tool_choice` | RAN CLEAN | 2026-08-21 | The four modes, the documented forcing overhead, then 6 iterations with no terminal `stop_reason` while the choice was forced, against 2 requests once it was dropped. |
 | `examlab.tool_errors` | RAN CLEAN | 2026-08-21 | Six cases. The structured surface produced retry, fix-and-re-call, escalate, escalate, fix-and-re-call, report; the generic surface produced `guess` six times. |
+| `examlab.review_criteria` | RAN CLEAN | 2026-08-21 | Three prompts scored on one nine-item answer key: precision 25%, 80%, 83% and recall 20%, 80%, 100%. One false positive survives all three arms. |
 | `examlab.structured_output` | RAN CLEAN | 2026-08-21 | Three extractions: one clean, one passing schema and cross-field checks while disagreeing with its source, one caught only by the `currency_detail` cross-field rule. |
 | `examlab.validation_retry` | RAN CLEAN | 2026-08-21 | All three reported valid by attempt 2 — the third by returning `currency_detail='CHF'`, which appears nowhere in its source and passed every check. |
 | `examlab.batches` | RAN CLEAN | 2026-08-21 | 5 resubmission requests from 3 failures, and a cadence table where an 8-hour window misses a 30-hour SLA by 2 hours and a 6-hour window meets it with zero margin. |
+| `examlab.confidence_routing` | RAN CLEAN | 2026-08-21 | 85% aggregate accuracy over 20 extractions; `scan` at 60% and `vat_rate` at 60%; two of the three errors sit at 0.96 confidence or above, and the 0.90 routing threshold reviews 30% of the volume while catching none of them. |
+| `examlab.provenance` | RAN CLEAN | 2026-08-21 | Six findings through two synthesis arms: 0 of 6 attributable after the lossy one, 5 of 6 after the preserving one. Then two numeric disagreements, one five years apart and one a genuine methodological conflict. |
 
 ### What "RAN CLEAN" means for the `examlab` rows, which is less than it looks
 
-Those eight rows are true and narrow. The code ran and printed what the row says.
-What it consumed was a **fabricated response script**, labelled `SCRIPTED` in
-place — a fourth provenance state introduced in `src/examlab/CLAUDE.md` alongside
+Those eleven rows are true and narrow. The code ran and printed what the row
+says. What it consumed was fabricated, and is labelled `SCRIPTED` in place — a
+fourth provenance state introduced in `src/examlab/CLAUDE.md` alongside
 DOCUMENTED, MEASURED and INFERRED.
+
+The fabrication takes two shapes, and the distinction is worth one line.
+Six of the eleven consume a scripted **response** — a list of Messages API
+replies this repo wrote — so what is real about them is the request their
+loop built and the validator's verdict on it. The other five
+(`tool_errors`, `structured_output`, `review_criteria`,
+`confidence_routing`, `provenance`) have no transport at all: they are
+arithmetic and policy over a fabricated **fixture**, so what is real about
+them is every number printed, given that fixture.
 
 So each row is evidence about a control flow and about nothing else. That
 `loop_antipatterns` returns an empty string after two requests is a fact about
@@ -155,13 +167,14 @@ happened to run the generator, which is not a control. The script regenerates
 into memory and compares, so the drift now fails loudly instead of waiting to be
 noticed.
 
-**The eleven rows with no caveat**, for completeness: `basics.check_auth`,
+**The fourteen rows with no caveat**, for completeness: `basics.check_auth`,
 `tools_mcp.tool_overhead` and `tools_mcp.external_mcp`, all three re-run on
-2026-08-21 after the relabel because all three are free; and the eight
+2026-08-21 after the relabel because all three are free; and the eleven
 `examlab.agentic_loop`, `examlab.loop_antipatterns`, `examlab.chaining`,
-`examlab.tool_choice`, `examlab.tool_errors`, `examlab.structured_output`,
-`examlab.validation_retry` and `examlab.batches`, for the reason given two
-sections above.
+`examlab.tool_choice`, `examlab.tool_errors`, `examlab.review_criteria`,
+`examlab.structured_output`, `examlab.validation_retry`,
+`examlab.batches`, `examlab.confidence_routing` and `examlab.provenance`,
+for the reason given two sections above.
 
 **The one number that changed on re-running, and it is not a small one.** The
 `tool_overhead` row previously recorded the `claude_code` built-in toolset at
@@ -214,6 +227,38 @@ reports them as INDETERMINATE rather than clean — its first version called the
 fresh, which would have been a fifth instance of the defect it was written to
 catch.
 
+### The `.claude/` material was observed working, twice, and that is new
+
+**MEASURED, 2026-08-21.** `.claude/rules/generated-docs.md` was written, and on
+the next edit to `docs/status.md` its full contents appeared in the session
+context, unprompted. `.claude/rules/checks.md` did not, because no file matching
+its globs was touched in the same window.
+
+That is worth recording for two reasons. It is the **first configuration under
+`.claude/` in this repo ever observed taking effect** — the settings file has
+been reported ignored on every run, and neither hook has fired in a session, so
+the D3 material had until now been entirely inert. And it settles the mechanism
+rather than the intention: the `paths` front matter was matched against the file
+being edited, and the rule that did not match stayed out of context, which is
+exactly the token argument for path scoping and not merely its rationale.
+
+The second observation is weaker and worth separating. Both skills under
+`.claude/skills/` were **discovered** — they appeared by name and description
+in the session's available-skills list shortly after being written, without
+being asked for. So the directory layout and the `name`/`description` front
+matter are MEASURED as far as registration goes.
+
+Discovery is not invocation, and the distinction is the whole of what is still
+unknown. Neither skill has been run, so **`context: fork` and `allowed-tools`
+remain DOCUMENTED** — in particular, that `allowed-tools` actually refuses a
+tool rather than merely advertising a restriction has not been seen here, and
+it is the one claim in that front matter with a security-shaped consequence.
+
+Both observations were made by the agent editing the repo, in the session that
+wrote the files. That is a weaker position than a fresh session confirming
+them, and is why these paragraphs say what was seen rather than what generally
+happens.
+
 ### The one result worth reading twice
 
 `orchestration.triage` ran twice with identical routing, and on the second run
@@ -236,8 +281,8 @@ Neither RAN CLEAN nor covered by a declared KNOWN_ISSUE. These are gaps.
 | `src/mockserver`'s five tools *through a model* | Hand-driven over stdio and verified message by message, twice, byte-identical. No model has ever called them over the transport. | As above. The in-process copies elsewhere in the repo are the closest substitute and are genuinely exercised. |
 | Every `examlab` module against a live credential | All eight run on a fabricated script, and that is the only path whose **output** is recorded here. `transport.live()` has returned a real `LiveTransport` once — see the finding below — but no request has ever been sent through one. | `uv sync --extra live`, `PLAYGROUND_EXAMLAB_LIVE=1`, and a credential the `anthropic` SDK resolves. A live run bills a credential this repo does not manage, so its numbers may not be written into this file. |
 | The four `messages`-array rules in `examlab/contract.py`, against the real API | All four now provably fire, on six fixtures, and the check is proven against a deliberately disabled rule — `scripts/check_contract_rules.py`. What is still unconfirmed is the other direction: the rules are DOCUMENTED from the tool-use pages and no real 400 has been seen, so the validator may be **stricter** than the API. | One live run that deliberately sends each malformed shape. If the API accepts one, `contract.py` is what is wrong, and it should be corrected there rather than worked around. |
-| **D3: skills and path-specific rules** | There is no `.claude/skills/` and no `.claude/rules/` in this repo, so `context: fork`, `allowed-tools`, `argument-hint` and YAML `paths` frontmatter are entirely absent. Task statements 3.2 and 3.3 are untouched, and 3.5 and 3.6 with them. | Writing them. This is the largest coverage gap in the repo and it sits in a 20% domain — see `domain-map.md`. |
-| **D4: explicit criteria and few-shot prompting** | Task statements 4.1 and 4.2 have no demo. `prompt_shape` is about injection resistance, which the blueprint does not test. | A demo whose output is objectively checkable. Rejected once for that reason; the reason still stands and the gap is still a gap. |
+| The two skills, **invoked** | Written 2026-08-21. Both were observed being *discovered* — see the section above — but neither has been run, so `context: fork`, `allowed-tools` and `argument-hint` are all DOCUMENTED and none is MEASURED. The claim that matters and is unverified: that `allowed-tools` refuses a tool rather than advertising a preference. | One invocation of each in an interactive session, and an attempt to use a tool the front matter excludes. |
+| Whether a real model responds to the three prompts in `review_criteria.py` the way the fixture says | The scores are exact arithmetic over an authored finding set, so the *direction* of the effect is asserted. The earlier decision not to demo 4.1 and 4.2 at all was wrong in one specific way — precision and recall against a labelled key are checkable for free — but that is not the same as having measured a model. | Run all three prompts live over a real diff with a hand-labelled key, three times each for variance. The prompt texts are written to be lifted straight into that. |
 | `.claude/hooks/block_secret_reads.py` inside a live session | Directly tested, 7/7 cases, including the encoding bug that made it fail open. It has never fired during an actual tool call. | An environment where the settings file is in effect, then an attempted blocked read. |
 | `.claude/hooks/check_turn_cap_guard.py` inside a live session | Both modes tested directly: standalone over the repo, and hook mode against a known-bad and a known-good file, exiting 2 and 0. Never fired via a real `PostToolUse` event. | Same as above. |
 | `.claude/settings.json` | Its entries were reported as ignored on every run while this repo was written, so neither the permission rules nor the hook registrations have been observed taking effect. | Determine why they are ignored in your setup and correct it; the file itself is valid. |
@@ -254,9 +299,9 @@ Official blueprint domains and weights. The assessment is this repo's own.
 |--------|--------|----------|-------------------|
 | **D1 Agentic Architecture & Orchestration** | 27% | `triage`, `workflow_vs_agent`, `subagent`, `hello`, and three `examlab` modules | **The strongest domain here, and the one that improved most this round.** It opens with a decomposition that works, adds two cost comparisons that both contradict standard advice, and now covers the raw loop: `stop_reason` control flow, the three named anti-patterns, and chaining against dynamic decomposition. Still missing: parallel fan-out, `fork_session` (1.7), and any agent that plans then revises. |
 | **D2 Tool Design & MCP Integration** | 18% | the six `tools_mcp` demos, `tools`, `src/mockserver`, and two `examlab` modules | **Deep, with two named holes.** Covers where a tool executes, what a tool costs before anyone calls it, how calls arrive, `tool_choice` semantics and structured error responses. The holes: the external half ships as a documented failure, and eleven of the twenty-four documentation pages are API-ONLY — five of those now readable in `examlab/` against a fabricated transport, which is not the same as demonstrated. |
-| **D3 Claude Code Configuration & Workflows** | 20% | `settings.json`, two hooks, `drill.md`, both `CLAUDE.md` files, `check_auth`, the dispatcher and `scripts/` | **The weakest domain against its weight, for two separate reasons.** What exists is mostly inert: the settings file has never been observed taking effect, neither hook has fired in a session, and the slash command has never been invoked. What is missing is examinable: no `.claude/skills/` and no `.claude/rules/` at all, so 3.2 and 3.3 have zero coverage, and 3.5 and 3.6 none either. The memory-hierarchy material is genuinely good and documented against official sources. `check_auth` lands here and its subject is on the guide's out-of-scope list. |
-| **D4 Prompt Engineering & Structured Output** | 20% | `prompt_shape`, `structured`, and three `examlab` modules | **Split down the middle.** The structured-output half is now well covered: schema as contract, what a schema cannot buy, validation-retry and the limit where it fabricates instead of failing, batch appropriateness and the SLA arithmetic. The prompt-engineering half is absent — nothing on explicit criteria (4.1) or few-shot prompting (4.2), and `prompt_shape` matches no task statement in the domain. |
-| **D5 Context Management & Reliability** | 15% | `context_budget`, `session_resume`, `error_taxonomy`, and the propagation half of `examlab.tool_errors` | Good depth on failure classification and context accounting. Three gaps: compaction is never triggered, there is no demonstration of retry or backoff as a *policy*, and 5.5 and 5.6 — human review, confidence calibration, provenance — have nothing at all. |
+| **D3 Claude Code Configuration & Workflows** | 20% | `settings.json`, two hooks, two skills, two path rules, `drill.md`, both `CLAUDE.md` files, `check_auth`, the dispatcher and `scripts/` | **Complete on paper and the thinnest on evidence.** Every task statement now has material: skills with all three frontmatter fields (3.2), path rules in both the spans-directories and narrower-than-a-directory shapes (3.3), CI documented with its flags (3.6), and 3.5 carrying a written reason for having no demo. What has actually been *observed* is one path rule loading. The settings file has never taken effect, neither hook has fired in a session, the slash command has never been invoked and neither skill has been. So the gap moved from coverage to evidence, which is progress and is not the same as done. `check_auth` lands here and its subject is on the guide's out-of-scope list. |
+| **D4 Prompt Engineering & Structured Output** | 20% | `prompt_shape`, `structured`, four `examlab` modules and `d4-prompt-output.md` | **No longer split.** The structured-output half covers schema as contract, what a schema cannot buy, validation-retry and the limit where it fabricates rather than fails, and batch appropriateness with the SLA arithmetic. The prompt-engineering half arrived with `review_criteria`, which scores three prompts against one labelled key and shows that a confidence hedge moves precision by nothing while a categorical list moves it from 25% to 80%. What is asserted rather than measured there is the model's response; the arithmetic is exact. `prompt_shape` still matches no task statement in the domain and says so. |
+| **D5 Context Management & Reliability** | 15% | `context_budget`, `session_resume`, `error_taxonomy`, and three `examlab` modules | Good depth on failure classification and context accounting, and 5.5 and 5.6 are now covered: `confidence_routing` shows an aggregate hiding two independent segment failures and a plausible routing threshold catching none of the errors, `provenance` shows attribution dying in the summarising step and a date field separating a real conflict from a stale figure. Two gaps left: compaction is never triggered, and there is still no demonstration of retry or backoff as a *policy* — the repo classifies failures without showing what reacts to them on a timer. |
 
 ## Reader path
 

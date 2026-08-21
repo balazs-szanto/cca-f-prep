@@ -13,12 +13,14 @@ table and for the earlier labels these replaced.
 |----|--------|------------|
 | `d1` | 27% | `docs/d1-orchestration.md`, `src/playground/orchestration/`, `src/playground/basics/hello.py`, `src/examlab/agentic_loop.py`, `src/examlab/loop_antipatterns.py`, `src/examlab/chaining.py` |
 | `d2` | 18% | `docs/d2-tools-mcp.md`, `src/playground/tools_mcp/`, `src/playground/basics/tools.py`, `src/mockserver/`, `src/examlab/tool_choice.py`, `src/examlab/tool_errors.py` |
-| `d3` | 20% | `docs/d3-claude-code.md`, `.claude/`, both `CLAUDE.md` files, `src/playground/basics/check_auth.py` |
-| `d4` | 20% | `src/playground/basics/prompt_shape.py`, `src/playground/basics/structured.py`, `src/examlab/structured_output.py`, `src/examlab/validation_retry.py`, `src/examlab/batches.py` |
-| `d5` | 15% | `docs/d5-reliability.md`, `src/playground/reliability/` |
+| `d3` | 20% | `docs/d3-claude-code.md`, `.claude/` including `skills/` and `rules/`, both `CLAUDE.md` files, `src/playground/basics/check_auth.py` |
+| `d4` | 20% | `docs/d4-prompt-output.md`, `src/examlab/review_criteria.py`, `src/playground/basics/structured.py`, `src/examlab/structured_output.py`, `src/examlab/validation_retry.py`, `src/examlab/batches.py`, `src/playground/basics/prompt_shape.py` |
+| `d5` | 15% | `docs/d5-reliability.md`, `src/playground/reliability/`, `src/examlab/tool_errors.py`, `src/examlab/confidence_routing.py`, `src/examlab/provenance.py` |
 
-`d4` has no `docs/dN-*.md` file — read the module docstrings and `LESSON` blocks
-directly. That gap is recorded in `docs/status.md` rather than papered over.
+All five domains now have a `docs/dN-*.md`. `d4-prompt-output.md` was the last
+one written, on 2026-08-21, once the domain had enough material to justify it —
+before that it had one demo and a null result, and inventing a document for it
+would have been the padding this repo argues against elsewhere.
 
 Rules for this drill:
 
