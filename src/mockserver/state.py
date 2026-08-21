@@ -4,7 +4,7 @@ WHAT      Seed data and mutation functions for the mock ticket tracker. No I/O,
 WHY       Keeping state separate from transport means the tools in server.py are
           thin wrappers you can read in one pass, and this file can be exercised
           without starting a server or speaking MCP at all.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  Module-level mutable state is the wrong shape for anything real: it is
           per-process, so two clients get two divergent worlds, and it vanishes on
           exit. That is deliberate here - a database would add a dependency and

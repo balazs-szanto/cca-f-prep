@@ -5,7 +5,7 @@ WHY       The SDK does not authenticate. It spawns the CLI, and the CLI resolves
           credentials by its own precedence rules - an API key in the environment
           silently outranks an OAuth session. Without this check, "it works"
           and "it is billing the account I meant" are different questions.
-DOMAIN    D0 Foundations
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Shelling out to the CLI costs a subprocess on every startup and ties
           this file to the CLI's output format: if `auth status --json` changes
           its field names, this breaks. That is accepted because the alternative
@@ -34,7 +34,7 @@ from typing import NoReturn
 from playground import teach
 
 LESSON = {
-    "domain": "D0 Foundations",
+    "domain": "D3 Claude Code Configuration and Workflows",
     "setup": "The Claude Code CLI on PATH and an authenticated session. Nothing "
              "else in this repo needs to have run first.",
     "run": "uv run python -m playground.run basics.check_auth",

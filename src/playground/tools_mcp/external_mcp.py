@@ -5,7 +5,7 @@ WHY       In-process tools (basics/tools.py) are a closed world you control. An
           external server is a separate process speaking a wire protocol, with a
           handshake that can fail, a version that can drift, and a lifetime you
           do not own. Everything here is genuine except the data.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  A separate process buys isolation, language independence and reuse
           across clients. It costs startup latency on every run, a failure
           surface reported as a connection status rather than an exception, and
@@ -49,7 +49,7 @@ MODEL = "claude-haiku-4-5"
 REFUSAL_HINTS = ("blocked", "refused", "denied", "not allowed", "not permitted")
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed, and `uv run python -m mockserver` runs by hand - "
              "see src/mockserver/README.md, which costs nothing and shows more "
              "of the protocol than this file does.",

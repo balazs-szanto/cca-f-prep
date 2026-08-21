@@ -3,7 +3,7 @@ WHAT      Define one tool in this Python process, expose it through an in-proces
           MCP server, and give the agent no way to answer except by calling it.
 WHY       This is the whole tool mechanism in one file: a schema, a function, a
           server, an allowlist. Every D4 demo is a variation on these four parts.
-DOMAIN    D0 Foundations, feeding into D4 Tool Design
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  An in-process server needs no transport, no versioning and no startup
           cost, and it is invisible to anything outside this program - no other
           client can reuse it, and no policy layer inspects it.
@@ -42,7 +42,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D0 Foundations, feeding D4 Tool Design",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Read the four parts below before running: "
              "a schema, a function, a server, an allowlist entry.",
     "run": "uv run python -m playground.run basics.tools",

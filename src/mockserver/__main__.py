@@ -4,7 +4,7 @@ WHY       An MCP stdio server is spawned by its client as a command line. Having
           a module entry point means that command is `python -m mockserver`,
           which works from any directory once the package is installed, rather
           than a path to a script file that only works from the repo root.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  `python -m` depends on the package being installed in the environment
           the client spawns. That is why external_mcp.py passes sys.executable
           rather than the string "python" - the client must use the same

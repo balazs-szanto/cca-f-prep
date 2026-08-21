@@ -2,7 +2,7 @@
 WHAT      The smallest useful Agent SDK call: one prompt in, streamed text out.
 WHY       Everything else in this repo is this file plus one idea. If the message
           loop below is not completely clear, nothing later will be.
-DOMAIN    D0 Foundations
+DOMAIN    D1 Agentic Architecture and Orchestration
 TRADEOFF  query() is a one-shot: it opens a session, runs, and closes. That makes
           it trivially simple and means there is no way to ask a follow-up - the
           context is gone when the iterator finishes.
@@ -36,7 +36,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D0 Foundations",
+    "domain": "D1 Agentic Architecture and Orchestration",
     "setup": "basics.check_auth passed. No tools, no schema, no session - one "
              "prompt and the two options every demo here must set.",
     "run": "uv run python -m playground.run basics.hello",

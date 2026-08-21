@@ -6,7 +6,7 @@ WHY       A demo that only prints results teaches whoever already knew what to
           anything runs, so you can compare; the closing block restates the
           lesson against the numbers that actually appeared, so the conclusion is
           attached to evidence instead of floating next to it.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Every demo now pays about fifteen lines of ceremony, and the console
           output is roughly twice as long. On a small screen the banner can push
           the real output out of view. That is accepted because the alternative -

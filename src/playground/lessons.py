@@ -6,7 +6,7 @@ WHY       The alternative is a hand-written index, and a hand-written index of
           twelve files goes stale on the first edit nobody remembers to mirror.
           The docstring stays the practitioner's view and LESSON stays the
           reader's view; neither is ever copied by hand into the other.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Reading source with `ast` instead of importing it means LESSON must be
           a literal dict of literals - no f-strings, no computed values, no
           constants pulled in from elsewhere. That is a real restriction and it
@@ -25,7 +25,16 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent
-DOCS = ROOT.parent.parent / "docs" / "lessons.md"
+SRC = ROOT.parent
+DOCS = SRC.parent / "docs" / "lessons.md"
+
+# WHY: run.py's registry indexes demos in two packages, and a dotted name alone
+# cannot say which. `basics.hello` lives under this package; `examlab.chaining`
+# is a sibling. Listing the siblings explicitly rather than probing the
+# filesystem keeps the failure mode useful - a typo in a registry key resolves to
+# a missing file and shows up as "no LESSON block", which is what you want, not
+# as a silent hunt through src/ that finds something unexpected.
+SIBLING_PACKAGES = frozenset({"examlab"})
 
 # WHY: the keys are listed in the order they are meant to be read, not
 # alphabetically. setup before run before expect before learn is the sequence a
@@ -34,8 +43,21 @@ ORDER = ("domain", "setup", "run", "cost", "expect", "learn")
 
 
 def path_of(demo: str) -> Path:
-    """Map a dotted demo name onto its file, without importing anything."""
-    return ROOT.joinpath(*demo.split(".")).with_suffix(".py")
+    """Map a dotted demo name onto its file, without importing anything.
+
+    Names whose first segment is in SIBLING_PACKAGES resolve from `src/`;
+    everything else resolves from inside this package. Reading the source rather
+    than importing it is what lets one generator span two packages that must not
+    import each other - see src/examlab/CLAUDE.md.
+    """
+    parts = demo.split(".")
+    base = SRC if parts[0] in SIBLING_PACKAGES else ROOT
+    return base.joinpath(*parts).with_suffix(".py")
+
+
+def module_of(demo: str) -> str:
+    """The importable module path for a registry key."""
+    return demo if demo.split(".")[0] in SIBLING_PACKAGES else f"playground.{demo}"
 
 
 def extract(path: Path) -> dict[str, Any]:

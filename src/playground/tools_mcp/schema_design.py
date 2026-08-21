@@ -6,7 +6,7 @@ WHY       A tool schema is prompt engineering with a type system attached, and
           only part of it is enforced. Knowing which part is the difference
           between a schema that constrains the model and one that only looks
           like it does.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  A tight schema buys validated arguments and removes a parsing step,
           but every enforced constraint is a bet on the future: the enum below
           has three sensors, and the day a fourth is installed the model must
@@ -86,7 +86,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Read PROMPT and both @tool definitions "
              "below, and decide what you think each schema will extract.",
     "run": "uv run python -m playground.run tools_mcp.schema_design",

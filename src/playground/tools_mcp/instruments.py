@@ -11,7 +11,7 @@ WHY       These were extracted from the demos that use them, and the reason is
           each instrument room to explain what it does NOT answer, which is the
           part that matters and the first part trimmed when it lives inside a
           demo that is against its line cap.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  A shared module means a reader of one demo has to open a second file
           to see how its numbers were produced, and the indirection hides how
           small these functions are. Against that: when they lived inside the

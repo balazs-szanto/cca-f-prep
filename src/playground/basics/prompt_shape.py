@@ -6,7 +6,7 @@ WHY       Prompt engineering is usually taught as word choice. The part that
           actually decides behaviour is structural: what is instruction, what is
           data, and whether the model has any way to tell them apart. A prompt
           built by string concatenation gives it no way.
-DOMAIN    D3 Prompt Engineering
+DOMAIN    D4 Prompt Engineering and Structured Output
 TRADEOFF  Delimiting costs tokens on every call and it is a convention, not a
           mechanism - nothing enforces it, and a sufficiently determined input
           can talk about the delimiter too. It reduces a risk; it does not
@@ -45,7 +45,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D3 Prompt Engineering",
+    "domain": "D4 Prompt Engineering and Structured Output",
     "setup": "basics.check_auth passed. Read CUSTOMER_MESSAGE below before "
              "running and note that it contains an instruction aimed at the "
              "model rather than at the reader.",

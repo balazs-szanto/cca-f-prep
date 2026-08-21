@@ -11,7 +11,7 @@ WHY       Both are rules the repo states and then relies on someone remembering.
           once for the reader who only opens the file, and mandated duplication
           with no sync check is the textbook way to end up with two versions of
           a paragraph that disagree about what went wrong.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  The cap is read from CLAUDE.md, so raising it stays a one-line edit in
           the document that argues for it - but it also means a reworded
           convention line silently disables the check. It reports that case as a

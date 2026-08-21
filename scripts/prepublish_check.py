@@ -6,7 +6,7 @@ WHAT      A static scan for things that should not be in a public repo: home
 WHY       The sweep that produced this file was done by reading every file, which
           works exactly once. A pattern scan is worse at judgement and much
           better at not getting bored, so it is the half worth automating.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Every rule here is a regex, so every rule is both over- and
           under-inclusive. It will flag a deliberate example and miss a leak
           phrased in prose. Treating a clean exit as proof of anything is the

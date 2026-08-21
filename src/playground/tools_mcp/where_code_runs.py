@@ -8,7 +8,7 @@ WHY       The most load-bearing idea in the tool-use documentation is WHERE the
           answer, server tools are executed for you. Latency, cost, trust and
           what you can debug all follow from that line. This file went looking
           for it in the SDK's own types and found it is not there.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  The local tool answers instantly, costs nothing beyond the tokens its
           definition and result occupy, and is exactly as correct as whoever
           last edited PINNED below. The built-in is current and cited, and in
@@ -84,7 +84,7 @@ from playground.tools_mcp.instruments import census
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Before running, look at PINNED below "
              "and decide what the local arm CAN say, then ask yourself how the "
              "other arm could possibly answer the same question.",

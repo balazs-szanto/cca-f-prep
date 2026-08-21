@@ -10,7 +10,7 @@ WHY       Tool definitions are input tokens. The name, the description and the
           attach a tool because it might be useful; this file prices that
           instinct, then shows that the instrument you would price it with reads
           zero if you ask it too early.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  Resident cost is not total cost. An uncalled tool still costs its
           definition every turn, mostly at cache rates; a tool that IS called
           adds a tool_use block, a tool_result block and at least one extra
@@ -64,7 +64,7 @@ from playground import teach
 from playground.tools_mcp.instruments import settle
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Read DESCRIPTION and SCHEMA below and "
              "guess, before running, what one tool of that shape costs you per "
              "session, on every turn, including the turns nobody calls it.",

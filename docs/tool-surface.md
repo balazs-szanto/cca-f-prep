@@ -24,17 +24,41 @@ the single most useful thing on this page: **if a feature is configured by a
 field on a Messages API request or on a tool definition, you cannot reach it
 from here, and no amount of SDK configuration will get you to it.**
 
-Nine of the twenty-four pages below are in that category. They are documented
-here and demonstrated nowhere, deliberately. Adding `anthropic` as a dependency
-and an API key would reach them and would break [the auth rule](../CLAUDE.md);
-writing code that cannot be run here would be worse, because it would look
-tested.
+Eleven of the twenty-four pages below are in that category — see the counts
+correction under [Buckets](#buckets). They are documented here and demonstrated
+against the real API nowhere, deliberately. Adding `anthropic` as a hard
+dependency and an API key would reach them and would break
+[the auth rule](../CLAUDE.md); writing code that cannot be run here would be
+worse, because it would look tested.
 
 The canonical shape of what is out of reach is the client round trip on the
 [overview page]: `client.messages.create(...)` with `tools=[...]` and
 `tool_choice={"type": "auto", "disable_parallel_tool_use": True}`, then a second
 call carrying an explicit `tool_result` block back. The Agent SDK does all of
 that for you and never shows you the seam.
+
+### What `src/examlab/` changed about this, and what it did not
+
+That seam is now written out in full in
+[`examlab/agentic_loop.py`](../src/examlab/agentic_loop.py), and `tool_choice` in
+[`examlab/tool_choice.py`](../src/examlab/tool_choice.py) — as runnable code,
+with the request contract enforced by
+[`examlab/contract.py`](../src/examlab/contract.py) rather than by an API. The
+compromise it found is a third option the paragraph above did not consider: code
+that runs, builds and validates real requests, and consumes **fabricated**
+responses labelled `SCRIPTED`.
+
+**No row below moves to COVERED because of it.** COVERED in this table means
+"the behaviour was observed here", and a response this repo wrote is not an
+observation of anything. What `examlab/` buys is the request side — which is the
+half you are responsible for, and the half a live call would not have taught any
+better. What it cannot buy is any claim about when a model emits a given
+`stop_reason`, how often `strict` prevents a malformed input, or whether the
+documented contract in `contract.py` is complete. Those stay open.
+
+Pages whose *client-side mechanics* are now readable, with their bucket
+unchanged: `overview`, `how-tool-use-works`, `define-tools` (the `tool_choice`
+half), `handle-tool-calls`, `strict-tool-use` (discussed, not exercised).
 
 ## Buckets
 
@@ -45,8 +69,21 @@ that for you and never shows you the seam.
 | **API-ONLY** | Needs the Messages API and an API key. Documented, never faked. |
 | **CONCEPTUAL** | No useful demo. Documentation only. |
 
-Counts: **7 COVERED, 2 OBSERVABLE, 10 API-ONLY, 5 CONCEPTUAL.** Three of the
-COVERED rows became so during this round; before it they were OBSERVABLE.
+Counts: **6 COVERED, 2 OBSERVABLE, 11 API-ONLY, 5 CONCEPTUAL** — 24 rows.
+
+> **Counts correction, 2026-08-21.** This line previously read "7 COVERED, 2
+> OBSERVABLE, 10 API-ONLY, 5 CONCEPTUAL", and two other places on this page said
+> "nine" API-ONLY pages. All three were wrong, in the direction that flatters the
+> repo: one COVERED row too many, one API-ONLY row too few, and a third figure
+> that matched neither. The total, 24, was right throughout, which is exactly why
+> nobody noticed — the sum checked out against the page count while its parts did
+> not. Counted by grep against the bucket column, not by hand. There is a script
+> that stops this happening in `docs/status.md`
+> (`scripts/check_caveat_accounting.py`) and none that does it for this page;
+> that asymmetry is now the most likely place for the next error of this kind.
+
+Three of the COVERED rows became so during an earlier round; before it they were
+OBSERVABLE.
 `web-fetch-tool` moved the other way, from OBSERVABLE to API-ONLY, once it was
 established that Claude Code's `WebFetch` is not the server tool of that name —
 see finding 1. A row moving toward *less* coverage is the kind of correction
@@ -204,10 +241,24 @@ the documentation.
 
 2. **A tool definition costs about 221 tokens, resident, called or not**, plus
    about 5 tokens of fixed overhead per in-process MCP server — measured across
-   1, 2, 4 and 8 tools, linear to the token. The `claude_code` built-in toolset
-   rests at roughly 11,000 tokens above a no-tools session, and reports a
-   *deferred* category that is listed but excluded from the total.
+   1, 2, 4 and 8 tools, linear to the token, and re-measured on 2026-08-21 with
+   the same result to the token.
    See [`tool_overhead.py`](../src/playground/tools_mcp/tool_overhead.py).
+
+   **The built-in figure in this finding was wrong within a day, and the
+   correction is the more useful half.** It read "roughly 11,000 tokens above a
+   no-tools session" when first measured on 2026-08-20. Re-run on 2026-08-21 on
+   the same machine against the same pinned `uv.lock`, the `claude_code` toolset
+   rested at **16,579 total, +14,146 above baseline** — about a quarter more —
+   and its breakdown now names a `Skills` category the earlier one did not.
+   Nothing in this repo changed; the harness did.
+
+   So the two halves of that demo have different shelf lives. The cost of *your*
+   tool definitions was stable to the token across a version bump. The cost of
+   *the platform's* moved 25% in a day. A number of the second kind is a
+   measurement, not a constant, and a budget built on one needs re-measuring
+   rather than citing. The *deferred* category — listed but excluded from the
+   total — is still there and still the trap it was.
 
 3. **`get_context_usage()` under-reports MCP tools until the handshake is
    forced**, and the settling is a race rather than a fixed number of steps. Read
@@ -228,8 +279,10 @@ the documentation.
 
 Honest gaps, so that nobody reads the COVERED column as completeness:
 
-- Everything in the API-ONLY bucket. Nine pages, documented above, demonstrated
-  nowhere.
+- Everything in the API-ONLY bucket. Eleven pages, documented above,
+  demonstrated against the real API nowhere. Five of them have their client-side
+  mechanics readable in `src/examlab/` against a fabricated transport, which is
+  not the same thing and is not counted as coverage here.
 - `pause_turn` and the server-side loop. The harness handles them; this repo has
   never seen one.
 - Mixed server-and-client turns, where a `server_tool_use` block arrives without

@@ -1,4 +1,4 @@
-# D2 — Claude Code Configuration and Workflows
+# D3 — Claude Code Configuration and Workflows
 
 ## The concept
 

@@ -1,13 +1,22 @@
 # Claude Agent SDK Playground
 
-A lab manual. Seventeen small demos, each isolating one architectural decision and
-printing what it costs. Every demo tells you on screen what to set up, what to
-run, what you should see, and what it proves — so the console teaches as much as
-the docs do.
+A lab manual in two halves. **`playground/`** is seventeen demos on the Claude
+Agent SDK, each isolating one architectural decision and printing what it costs.
+**`examlab/`** is eight modules on the request/response layer underneath it —
+the agentic loop, `tool_choice`, prompt chaining, structured output,
+validation-retry, batching — which the Agent SDK owns on your behalf and
+therefore never shows you. Every module tells you on screen what to set up, what
+to run, what you should see, and what it proves, so the console teaches as much
+as the docs do.
+
+The two halves have different auth rules and different domain numbering, and both
+differences are deliberate. See section 7.
 
 This repo describes what each demo demonstrates. It does not claim what any exam
-covers; mapping the demos onto a syllabus is your job, and doing that mapping is
-most of the value.
+covers — but the official blueprint is now in
+[`docs/domain-map.md`](docs/domain-map.md), and the mapping between it and this
+repo's own labels is **not** the identity function. Read that table before
+trusting a `DOMAIN` line.
 
 ## What this repo does, and what it does not
 
@@ -66,8 +75,15 @@ The markers are not maintained by hand — they are read out of each module's
 `LESSON` block by `playground/lessons.py`, which parses the source with `ast`
 rather than importing it, because importing a demo runs it.
 
-**You can do a large part of this repo for nothing.** Free right now:
+**You can do most of this repo for nothing.** Ten of the twenty-five demos are
+marked free, and an eleventh — `external_mcp` — is free wherever the server
+declines to attach, which is why it carries `!` rather than a blank. Free right
+now:
 
+- **All eight `examlab` modules**, which is the whole of section 7. They make no
+  model call and no network call at all, and they are the material on the raw
+  loop, `tool_choice`, chaining, structured output, validation-retry and
+  batching. If your quota is the constraint, start there rather than here.
 - `basics.check_auth` — makes no model call.
 - `tools_mcp.tool_overhead` — makes no model call either, and it is the one to
   run if you only run one. It measures what a tools array costs before anything
@@ -82,30 +98,36 @@ rather than importing it, because importing a demo runs it.
   which is the whole set of banners in one page.
 - Testing the `PreToolUse` hook directly (section 6).
 
-That leaves fourteen `$` demos, which together cost a few cents against your
-subscription quota. They pin `claude-haiku-4-5` and cap `max_turns`, and each one
-names its own cost in its banner before it runs. If these counts ever disagree
-with `--list`, believe `--list`: it derives them from each module's `LESSON`
-block, and this paragraph is maintained by hand.
+That leaves fourteen `$` demos, all of them under `playground/`, which together
+cost a few cents against your subscription quota. They pin `claude-haiku-4-5` and
+cap `max_turns`, and each one names its own cost in its banner before it runs.
+If these counts ever disagree with `--list`, believe `--list`: it derives them
+from each module's `LESSON` block, and this paragraph is maintained by hand. The
+three numbers here — 10, 1 and 14 — were checked against `--list` on 2026-08-21
+by counting its markers, which is the only way this paragraph gets checked at all.
 
 ## 3. Ground yourself
 
 Run these five in order. They are the whole SDK in miniature.
 
-These five are **all of D0 and all of D3**, which is why neither has a domain
-doc in section 4. D0 is a bucket rather than a domain — auth, one call, one
-schema, one tool have nothing in common except that everything later assumes
-them — so there is no argument to write up, only prerequisites to run. D3 is a
-genuine domain and has exactly one demo, `prompt_shape`, and one demo does not
-justify a `docs/d3-*.md`; inventing one to make the set look symmetrical would
-be the padding this repo argues against everywhere else. What D3 coverage
-actually amounts to is assessed in [`docs/status.md`](docs/status.md).
+These five are **prerequisites, not a domain.** They used to be filed under a
+label of this repo's own called "D0 Foundations", and the relabel of 2026-08-21
+dissolved it, because the official blueprint has no such domain and the five have
+nothing in common except that everything later assumes them. They now land in
+four different domains — `check_auth` in D3, `hello` in D1, `tools` in D2,
+`prompt_shape` and `structured` in D4 — and they stay together here anyway, since
+reading order and domain are different questions.
+
+Two of the five are honest near-misses against the domain they landed in, and
+[`docs/domain-map.md`](docs/domain-map.md) says which and why: `check_auth`'s
+subject is on the guide's *out-of-scope* list, and `prompt_shape` matches none of
+D4's six task statements. Both are still worth running. Neither will be examined.
 
 | # | Run | Free? | What it teaches |
 |---|-----|-------|-----------------|
 | 1 | `basics.check_auth` | free | Which credential is paying, and why your code cannot control that — only refuse. |
 | 2 | `basics.hello` | `$` | `query()` is an async generator over typed messages. The run *is* the loop, and `ResultMessage` is the only place its numbers exist. |
-| 3 | `basics.prompt_shape` | `$` | **The repo's only D3 — Prompt Engineering — material**, sitting here rather than in section 4 for the reason given above. What is instruction and what is data is a convention you construct. Also a worked null result: the comparison came out flat, twice, and says so instead of being tuned until it did not. |
+| 3 | `basics.prompt_shape` | `$` | What is instruction and what is data is a convention you construct. Also a worked null result: the comparison came out flat, twice, and says so instead of being tuned until it did not. Filed under D4 on the domain's name; its actual subject is not in the blueprint. |
 | 4 | `basics.structured` | `$` | `output_format` enforces shape from outside the prompt — and *only* shape. |
 | 5 | `basics.tools` | `$` | A tool is four things that must line up: schema, handler, server alias, allowlist entry. |
 
@@ -161,13 +183,19 @@ documented failure.
 Read the domain doc first, then run it, then read the source — in that order,
 because the docs pose the question the numbers answer.
 
-**This section is D1, D4 and D5 only, and the omissions are deliberate rather
-than oversights.** D0 and D3 are section 3, for the reasons given there. D2 is
-section 6, because none of it runs through the dispatcher. That accounts for
-every domain this repo labels: 5 demos in section 3 plus 12 here is all 17.
-Those labels are the author's own and are **not** verified against any official
-syllabus — see [`docs/domain-map.md`](docs/domain-map.md) before you map any of
-it onto one.
+**This section is D1, D2 and D5 only, and the omissions are deliberate rather
+than oversights.** The five grounding demos are section 3, and they now spread
+across four domains rather than sitting in a bucket. D3 is section 6, because
+none of it runs through the dispatcher. 5 demos in section 3 plus 12 here is all
+17. D4 has no subsection here at all — its examinable half is section 7, and
+what is missing from it is listed in
+[`docs/domain-map.md`](docs/domain-map.md).
+
+**All D-numbers in this repo are the official blueprint's**, as of the relabel on
+2026-08-21. They were not before: two were transposed and one had no counterpart,
+so anything written earlier — an old branch, a cached page — uses different
+numbers. `docs/domain-map.md` carries the blueprint table, the old-to-new map,
+and the honest report of which demos do not fit the domain they landed in.
 
 ### D1 — Agentic Architecture and Orchestration · `docs/d1-orchestration.md`
 
@@ -177,7 +205,7 @@ it onto one.
 | `orchestration.workflow_vs_agent` | `$` | The same classification as a scripted workflow and as an agent. The workflow column is the **more expensive** one — reproduced across runs at roughly 3.5x the agent's cost, with identical labels. That contradicts the standard advice. Work out why before reading the closing block. |
 | `orchestration.subagent` | `$` | The same summarising job inline and delegated, with a delta column. Every delta is positive: you are paying for context isolation on a task with nothing to isolate. |
 
-### D4 — Tool Design and MCP Integration · `docs/d4-tools-mcp.md`
+### D2 — Tool Design and MCP Integration · `docs/d2-tools-mcp.md`
 
 | Run | Free? | What to look for |
 |-----|-------|------------------|
@@ -210,7 +238,7 @@ shows more of the protocol than any agent run does — including the fact that a
 raised exception reaches the client as `isError` plus text, with the exception
 class gone.
 
-## 6. D2 — Claude Code Configuration · `docs/d2-claude-code.md`
+## 6. D3 — Claude Code Configuration · `docs/d3-claude-code.md`
 
 Nothing here runs through the dispatcher; these files configure Claude Code
 itself. All of it is free.
@@ -241,7 +269,59 @@ itself. All of it is free.
 5. `.claude/commands/drill.md` — a custom slash command. In an interactive Claude
    Code session, `/drill d4` quizzes you from these files.
 
-## 7. Close the loop
+## 7. `examlab` — the layer the Agent SDK owns for you
+
+Same dispatcher, same `--list`, one boundary line in the output:
+
+    uv run python -m playground.run --list
+    uv run python -m playground.run examlab.agentic_loop
+
+Everything in section 4 runs through `query()`, which builds the requests, runs
+the tool round trip and hands you typed messages. That is the right trade for
+building an agent and the wrong one for learning what an agent *is*:
+`stop_reason`, `tool_result` blocks, `tool_choice` and `custom_id` have no
+`ClaudeAgentOptions` equivalent, and
+[`docs/tool-surface.md`](docs/tool-surface.md) counts ten of twenty-four official
+tool-use pages as out of reach for that reason. This package is those ten pages,
+written as code you can run.
+
+**All eight are free and make no network call by default.** Each one builds real
+requests and validates them against the documented contract; the responses are
+fabricated by this repo and labelled `SCRIPTED`, a provenance state introduced in
+[`src/examlab/CLAUDE.md`](src/examlab/CLAUDE.md) precisely because a scripted
+output and a measured one look identical on a console.
+
+| Run | What to look for |
+|-----|------------------|
+| `agentic_loop` | **Read this one first.** The whole loop in nine lines of control flow. The first scripted response carries prose *and* a tool call in the same turn, which is the detail the next module's wrong loops all trip over. Ends by tripping a circuit breaker on purpose, to show why hitting an iteration cap must raise rather than return. |
+| `loop_antipatterns` | The three termination anti-patterns the blueprint names, plus the plumbing bug that causes them, each run against the same script. Two of the four return a confident wrong answer with no error at all. Note *which* two. |
+| `chaining` | The same code review as one request, a fixed chain, and a dynamic decomposition, with the request sizes each one actually built. The dynamic arm sends a **larger** request than the single pass — the prose in the file originally claimed otherwise and the numbers won. |
+| `tool_choice` | The four modes, the documented per-request token cost of forcing one, and two loops identical but for one line. The one that never terminates is the one whose loop is correct. |
+| `tool_errors` | Six failures against a structured tool surface and a generic one, with the recovery policy run over both. The generic column reads `guess` six times, including for a successful empty result. |
+| `structured_output` | An extraction that passes the schema, passes the cross-field check, and is wrong about money. Then which layer catches what, and what none of them catch. |
+| `validation_retry` | Three documents, all three reported valid by attempt two. The third validated by **inventing** a value the source never contained, after being told not to infer. |
+| `batches` | The four properties, and the arithmetic that decides whether the 50% is available to you at all: your submission gap plus the 24-hour bound, against the SLA you promised. |
+
+**The auth rule is narrowed here, not repealed.** No module requires a
+credential, none names a credential variable, and `anthropic` is an optional
+extra imported lazily in one function. Going live needs two deliberate acts, not
+one — installing a library must not start spending money:
+
+    uv sync --extra live
+    PLAYGROUND_EXAMLAB_LIVE=1 uv run python -m playground.run examlab.agentic_loop
+
+Set the flag without the extra, or with it but no credential, and you get the
+scripted run **plus a line saying which gate declined**. All four combinations
+were exercised on 2026-08-21; the fourth gate exists because the first version of
+`live()` did not have it and crashed at request time instead of falling back.
+
+A live run bills a credential this repo does not manage, which is why no number
+from one may be written into `docs/status.md`.
+[`src/examlab/CLAUDE.md`](src/examlab/CLAUDE.md) states the shape of the
+narrowing; `basics/check_auth.py` still refuses to run `playground/` under
+anything but an interactive session.
+
+## 8. Close the loop
 
 - [`docs/status.md`](docs/status.md) — **read this one.** It is two things.
   First, the run inventory: every demo, whether it has actually been run, and
@@ -262,7 +342,7 @@ itself. All of it is free.
   source; exit 1 prints the first differing line and points at the fix. It
   exists because that regeneration step was forgotten once and a docs page
   disagreeing with its own source reached a public remote.
-- **The four static checks**, all free, all exit 0 on a clean tree, and each one
+- **The seven static checks**, all free, all exit 0 on a clean tree, and each one
   proven to fail on a real defect before it was trusted:
 
       uv run python scripts/prepublish_check.py         # nothing personal ships
@@ -270,11 +350,15 @@ itself. All of it is free.
       uv run python scripts/check_caveat_accounting.py  # status.md counts itself
       uv run python scripts/check_lessons_fresh.py      # generated file vs source
       uv run python scripts/check_conventions.py        # line cap, KNOWN ISSUE sync
+      uv run python scripts/check_contract_rules.py     # every contract rule fires
       uv run python .claude/hooks/check_turn_cap_guard.py
 
   Every one of them exists because a rule this repo states in prose was broken
-  by the person who wrote the prose. The counts in section 2 are the one piece
-  of hand-maintained arithmetic still unchecked, and `docs/status.md` says why.
+  by the person who wrote the prose. This line said "four" while listing six, so
+  it was itself an instance of the class it introduces; the count is now seven.
+  Hand-maintained arithmetic still unchecked: the counts in section 2, and the
+  bucket totals in `docs/tool-surface.md`, which were wrong in three places until
+  2026-08-21. `docs/status.md` says why neither is automated.
 - [`docs/tool-surface.md`](docs/tool-surface.md) — every page of the official
   tool-use documentation set, triaged into what this repo demonstrates, what it
   can only observe, and what needs the Messages API and is therefore documented
@@ -286,9 +370,11 @@ itself. All of it is free.
   nobody is checking.
 - [`docs/traps.md`](docs/traps.md) — anti-patterns the demos show on purpose,
   plus the environment traps found while building this, each with its evidence.
-- [`docs/domain-map.md`](docs/domain-map.md) — how this repo labels its own
-  domains, and why those labels are **not** verified against any official source.
-  Read it before mapping any of this onto a syllabus.
+- [`docs/domain-map.md`](docs/domain-map.md) — the official blueprint with its
+  weightings, the old-to-new label map for anything written before 2026-08-21,
+  and **the part to read if you are studying**: which demos land in a domain the
+  exam does not test there, and which task statements have no coverage in this
+  repo at all. Two of them are large and in a 20% domain.
 
 ## Things that may differ where you run this
 

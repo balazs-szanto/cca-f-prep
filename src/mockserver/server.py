@@ -7,7 +7,7 @@ WHY       external_mcp.py used to reach for @modelcontextprotocol/server-filesys
           reproducible. A local mock removes every one of those dependencies.
           The protocol, the handshake and the failure modes are real; only the
           backing data is invented.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  A separate process buys a genuine transport - real stdio framing, real
           JSON-RPC, a real crash surface - and costs process startup on every
           run plus a second place for a bug to hide. Nothing here needs its own

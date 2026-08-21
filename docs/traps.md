@@ -12,16 +12,16 @@ will not reproduce for you, and that is information too.
 
 | Trap | Shown in | Domain |
 |------|----------|--------|
-| Free-form string parameter where the input space is closed | `tools_mcp/schema_design.py` | D4 |
-| Hardcoding `allowed_tools` against an external server you do not version | `tools_mcp/external_mcp.py` | D4 |
-| Treating `allowed_tools` as an argument-level security control | `tools_mcp/permission_gate.py` | D4 |
+| Free-form string parameter where the input space is closed | `tools_mcp/schema_design.py` | D2 |
+| Hardcoding `allowed_tools` against an external server you do not version | `tools_mcp/external_mcp.py` | D2 |
+| Treating `allowed_tools` as an argument-level security control | `tools_mcp/permission_gate.py` | D2 |
 | Assuming a workflow is cheaper than an agent | `orchestration/workflow_vs_agent.py` | D1 |
 | Delegating a sub-task with nothing bulky to isolate | `orchestration/subagent.py` | D1 |
 | One `try/except` around the agent call | `reliability/error_taxonomy.py` | D5 |
 | Trusting schema validity as correctness | `reliability/error_taxonomy.py` | D5 |
 | Assuming multi-turn continuity survives a process restart | `reliability/session_resume.py` | D5 |
 | Believing the context window is "my conversation" | `reliability/context_budget.py` | D5 |
-| Enforcing a must-hold rule in a memory file instead of a hook | `.claude/hooks/block_secret_reads.py` | D2 |
+| Enforcing a must-hold rule in a memory file instead of a hook | `.claude/hooks/block_secret_reads.py` | D3 |
 
 The three worth expanding, because the code alone does not make them obvious:
 
@@ -187,7 +187,7 @@ network was involved. The lesson generalises past the specific setup: whatever
 decides that an external MCP server may be attached does not appear to care that
 the process is local, or yours, or written in the same language as the client.
 In-process `create_sdk_mcp_server` tools were unaffected, which is why
-`permission_gate.py` uses one — and see `d4-tools-mcp.md` for why that asymmetry
+`permission_gate.py` uses one — and see `d2-tools-mcp.md` for why that asymmetry
 is the point rather than a loophole.
 
 **An exception's class does not survive the MCP transport.** MEASURED 2026-08-20

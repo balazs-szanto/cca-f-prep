@@ -10,7 +10,7 @@ WHY       lessons.md is generated from the LESSON block of every demo, and
           source. Nobody noticed until an unrelated check happened to run the
           generator. This script is the third in this repo written because
           remembering was not enough.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  It imports playground.run to reach DEMOS, so it costs an import that
           the other two checks avoid - and importing run.py is safe only because
           run.py itself is careful never to import a demo. If that ever stops

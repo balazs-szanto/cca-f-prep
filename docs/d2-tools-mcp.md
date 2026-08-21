@@ -1,4 +1,4 @@
-# D4 — Tool Design and MCP Integration
+# D2 — Tool Design and MCP Integration
 
 ## The concept
 

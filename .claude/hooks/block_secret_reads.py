@@ -5,7 +5,7 @@ WHY       The deny list in settings.json covers paths it can pattern-match. A
           hook sees the resolved tool input and can reason about it - here, it
           catches a credential path smuggled inside a Bash command string, which
           a Read(...) glob rule never inspects.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Programmatic guardrails are deterministic and unbypassable by prompt
           injection, but they are blunt: this hook cannot tell a legitimate
           `claude auth status` from an attempt to exfiltrate a token, so it

@@ -10,23 +10,31 @@ The order below is the reading order, and it is load-bearing.
 
 | Demo | Domain | Cost | Completes here |
 |------|--------|------|----------------|
-| [`basics.check_auth`](#basicscheck_auth) | D0 Foundations | free - no model call, one subprocess | yes |
-| [`basics.hello`](#basicshello) | D0 Foundations | 1 model call | yes |
-| [`basics.prompt_shape`](#basicsprompt_shape) | D3 Prompt Engineering | 2 model calls, one per construction | yes |
-| [`basics.structured`](#basicsstructured) | D0 Foundations, feeding D5 Reliability | 1 model call | yes |
-| [`basics.tools`](#basicstools) | D0 Foundations, feeding D4 Tool Design | 1 model call, four to five turns | yes |
+| [`basics.check_auth`](#basicscheck_auth) | D3 Claude Code Configuration and Workflows | free - no model call, one subprocess | yes |
+| [`basics.hello`](#basicshello) | D1 Agentic Architecture and Orchestration | 1 model call | yes |
+| [`basics.prompt_shape`](#basicsprompt_shape) | D4 Prompt Engineering and Structured Output | 2 model calls, one per construction | yes |
+| [`basics.structured`](#basicsstructured) | D4 Prompt Engineering and Structured Output, feeding D5 Reliability | 1 model call | yes |
+| [`basics.tools`](#basicstools) | D2 Tool Design and MCP Integration | 1 model call, four to five turns | yes |
 | [`orchestration.triage`](#orchestrationtriage) | D1 Agentic Architecture and Orchestration | 5 model calls across 4 requests - 2, 2, 1 and 0 respectively | yes |
 | [`orchestration.workflow_vs_agent`](#orchestrationworkflow_vs_agent) | D1 Agentic Architecture and Orchestration | 4 model calls - three for the workflow, one for the agent | yes |
 | [`orchestration.subagent`](#orchestrationsubagent) | D1 Agentic Architecture and Orchestration | 2 model calls, the second of which fans out to a subagent | yes |
-| [`tools_mcp.where_code_runs`](#tools_mcpwhere_code_runs) | D4 Tool Design and MCP Integration | 2 model calls, one per arm, plus web searches in the second | yes |
-| [`tools_mcp.schema_design`](#tools_mcpschema_design) | D4 Tool Design and MCP Integration | 2 model calls, one per schema | yes |
-| [`tools_mcp.parallel_tools`](#tools_mcpparallel_tools) | D4 Tool Design and MCP Integration | 2 model calls, one per arm | yes |
-| [`tools_mcp.tool_overhead`](#tools_mcptool_overhead) | D4 Tool Design and MCP Integration | free - 0 model calls, every reading is a control request | yes |
-| [`tools_mcp.external_mcp`](#tools_mcpexternal_mcp) | D4 Tool Design and MCP Integration | free if the server cannot be attached, since it stops before the model call; 1 model call if it can | known issue |
-| [`tools_mcp.permission_gate`](#tools_mcppermission_gate) | D4 Tool Design and MCP Integration | 1 model call | yes |
+| [`tools_mcp.where_code_runs`](#tools_mcpwhere_code_runs) | D2 Tool Design and MCP Integration | 2 model calls, one per arm, plus web searches in the second | yes |
+| [`tools_mcp.schema_design`](#tools_mcpschema_design) | D2 Tool Design and MCP Integration | 2 model calls, one per schema | yes |
+| [`tools_mcp.parallel_tools`](#tools_mcpparallel_tools) | D2 Tool Design and MCP Integration | 2 model calls, one per arm | yes |
+| [`tools_mcp.tool_overhead`](#tools_mcptool_overhead) | D2 Tool Design and MCP Integration | free - 0 model calls, every reading is a control request | yes |
+| [`tools_mcp.external_mcp`](#tools_mcpexternal_mcp) | D2 Tool Design and MCP Integration | free if the server cannot be attached, since it stops before the model call; 1 model call if it can | known issue |
+| [`tools_mcp.permission_gate`](#tools_mcppermission_gate) | D2 Tool Design and MCP Integration | 1 model call | yes |
 | [`reliability.session_resume`](#reliabilitysession_resume) | D5 Context Management and Reliability | 4 model calls across three sessions | yes |
 | [`reliability.error_taxonomy`](#reliabilityerror_taxonomy) | D5 Context Management and Reliability | 3 model calls; case 1 is free | yes |
 | [`reliability.context_budget`](#reliabilitycontext_budget) | D5 Context Management and Reliability | 1 model call; both context readings are free | yes |
+| [`examlab.agentic_loop`](#examlabagentic_loop) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls (1 live request per iteration if a credential resolves) | yes |
+| [`examlab.loop_antipatterns`](#examlabloop_antipatterns) | D1 Agentic Architecture and Orchestration - 1.1 | free - scripted transport, 0 model calls | yes |
+| [`examlab.chaining`](#examlabchaining) | D1 Agentic Architecture - 1.6, and D4 - 4.6 | free - scripted transport, 0 model calls | yes |
+| [`examlab.tool_choice`](#examlabtool_choice) | D2 Tool Design and MCP Integration - 2.3 | free - responses are synthesised from the request, 0 model calls | yes |
+| [`examlab.tool_errors`](#examlabtool_errors) | D2 Tool Design and MCP Integration - 2.2 | free - 0 model calls | yes |
+| [`examlab.structured_output`](#examlabstructured_output) | D4 Prompt Engineering and Structured Output - 4.3 | free - 0 model calls, extractions are fabricated | yes |
+| [`examlab.validation_retry`](#examlabvalidation_retry) | D4 Prompt Engineering and Structured Output - 4.4 | free - 0 model calls | yes |
+| [`examlab.batches`](#examlabbatches) | D4 Prompt Engineering and Structured Output - 4.5 | free - 0 model calls | yes |
 
 ## Every lesson in full
 
@@ -167,4 +175,68 @@ The order below is the reading order, and it is load-bearing.
 - **cost** — 1 model call; both context readings are free
 - **expect** — Two category breakdowns with a five-figure token total in each, the delta between them, the auto-compact threshold, and an explicit line saying compaction did NOT happen during this run.
 - **learn** — The window has a floor and a ceiling that neither the percentage nor the 'Free space' line tells you about: several thousand tokens are resident before you speak, and the ceiling that governs a long session is the auto-compact threshold, not the window size.
+
+### examlab.agentic_loop
+
+- **setup** — Nothing. Read TOOLS and SCRIPT below first, then run_loop().
+- **run** — uv run python -m playground.run examlab.agentic_loop
+- **cost** — free - scripted transport, 0 model calls (1 live request per iteration if a credential resolves)
+- **expect** — Three exchanges. The first response carries prose AND a tool call in the same turn, which is the detail every wrong loop trips over. Then the stop_reason table and the budget incident.
+- **learn** — stop_reason is the termination condition and nothing else is. An iteration cap is a circuit breaker: reaching it is an incident to report, not a way to finish.
+
+### examlab.loop_antipatterns
+
+- **setup** — Read agentic_loop.py first. This file is that loop, broken four ways.
+- **run** — uv run python -m playground.run examlab.loop_antipatterns
+- **cost** — free - scripted transport, 0 model calls
+- **expect** — Four diagnoses. Two of the wrong loops return a confident wrong answer with no error at all; the other two are caught by the request validator, not by anything the loop itself noticed.
+- **learn** — Every one of these is a termination condition that correlates with being finished instead of meaning it. The dangerous two are the ones that fail silently, and both of those return a STRING - so the caller has no way to tell.
+
+### examlab.chaining
+
+- **setup** — Read DIFF and the three strategy functions. Predict which one sends the largest single request before you run it.
+- **run** — uv run python -m playground.run examlab.chaining
+- **cost** — free - scripted transport, 0 model calls
+- **expect** — Three strategies, then a table of request counts and the largest prompt each one built. The chain's largest link is smaller than the single pass at three times the total - and the dynamic one's is LARGER than the single pass, which is the row to read twice.
+- **learn** — A fixed chain trades request count for request size and buys back attention; dynamic decomposition buys adaptivity and, unless you scope each subtask's input yourself, buys no context reduction at all. Choose on predictability, not on cost.
+
+### examlab.tool_choice
+
+- **setup** — Read ChoiceAwareTransport, then the two loops. Decide which one terminates before you run it.
+- **run** — uv run python -m playground.run examlab.tool_choice
+- **cost** — free - responses are synthesised from the request, 0 model calls
+- **expect** — The mode table, then two loops over identical tools: one that never terminates and one that does. The only difference is a single line that removes tool_choice after the first request.
+- **learn** — tool_choice is per-request. 'any' and a named tool guarantee a tool call on EVERY request you send them with, so the loop's exit has to come from a later request that no longer forces one.
+
+### examlab.tool_errors
+
+- **setup** — Read STRUCTURED and GENERIC below, then recover(). The two tool surfaces return the same failures with different metadata.
+- **run** — uv run python -m playground.run examlab.tool_errors
+- **cost** — free - 0 model calls
+- **expect** — Six cases against both tool surfaces. The structured surface retries exactly one of them and explains the rest; the generic surface retries all six or none, because it cannot tell.
+- **learn** — An error is retryable, or a policy violation, or a bad argument, or a missing permission - and a valid empty result is none of those. Collapsing them into one string does not lose detail, it loses the decision.
+
+### examlab.structured_output
+
+- **setup** — Read SCHEMA field by field and ask of each one: required or nullable, and what happens if the document is silent about it?
+- **run** — uv run python -m playground.run examlab.structured_output
+- **cost** — free - 0 model calls, extractions are fabricated
+- **expect** — Three extractions. One clean. One that passes every schema check and gets the money wrong. One that invents an invoice number because the field was required and the document had none.
+- **learn** — A schema constrains shape, and shape is not correctness. Make fields nullable when the source may be silent, and put the cross-field check in your code - the schema cannot express it.
+
+### examlab.validation_retry
+
+- **setup** — Read structured_output.py first - this file reuses its schema and both of its validators.
+- **run** — uv run python -m playground.run examlab.validation_retry
+- **cost** — free - 0 model calls
+- **expect** — Three documents, all three reported valid by attempt 2. The third one is the lesson: it validated by inventing a value the source never contained, after being told not to infer.
+- **learn** — Retry fixes format and structure. Asked for information the source does not contain it does not fail - it fabricates, and the fabrication passes validation, because validation is the only signal the loop has. Classify the error before spending the call.
+
+### examlab.batches
+
+- **setup** — None. Read PROPERTIES, then do the arithmetic in your head before you look at the table.
+- **run** — uv run python -m playground.run examlab.batches
+- **cost** — free - 0 model calls
+- **expect** — The four properties, a request array with custom_ids, a resubmission that sends 5 requests instead of 100, and a cadence table where one of four windows misses a 30-hour SLA and one meets it with exactly zero margin.
+- **learn** — Batch is a latency decision wearing a cost badge. Worst case is your submission gap PLUS the processing window, so the cadence is what you design; and no multi-turn tool calling means an agentic loop cannot be batched at all, only its individual turns.
 

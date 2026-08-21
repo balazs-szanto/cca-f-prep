@@ -5,7 +5,7 @@ WHY       Prompt-based JSON instructions are fragile: the model can add prose,
           wrap the object in markdown fences, or drop a field. output_format
           moves the requirement out of the prompt and into the request, where it
           is enforced rather than requested.
-DOMAIN    D0 Foundations, feeding into D5 Reliability
+DOMAIN    D4 Prompt Engineering and Structured Output, feeding into D5 Reliability
 TRADEOFF  A schema constrains shape, never meaning. Every field can be present
           and correctly typed while the content is wrong - see
           reliability/error_taxonomy.py, where a schema-valid answer fails an
@@ -38,7 +38,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D0 Foundations, feeding D5 Reliability",
+    "domain": "D4 Prompt Engineering and Structured Output, feeding D5 Reliability",
     "setup": "basics.check_auth passed. Read SCHEMA below before running - the "
              "prompt deliberately says nothing about JSON.",
     "run": "uv run python -m playground.run basics.structured",

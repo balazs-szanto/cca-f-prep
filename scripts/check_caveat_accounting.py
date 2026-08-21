@@ -10,7 +10,7 @@ WHY       status.md is the file this repo's credibility rests on, and its caveat
           telling you what has and has not been observed. It was found by review
           rather than by the author, and then the same section was rewritten by
           hand twice more. Prose that counts things is prose that goes stale.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  It parses two hand-written lists out of Markdown, so a rewording of
           the headings breaks the check rather than the document. That is the
           right way round - a check that silently stops finding its input is

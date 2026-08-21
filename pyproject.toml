@@ -13,14 +13,25 @@ dependencies = [
     "claude-agent-sdk",
 ]
 
-# Both packages must be importable: `python -m playground.run` for the demos and
-# `python -m mockserver` for the stdio MCP server they talk to. uv_build ships
-# with uv itself, so this adds no runtime dependency.
+# WHY optional and not a dependency: src/examlab/ runs end to end with no
+# credential against a fabricated response script, which is its default and the
+# only path this repo exercises. `anthropic` is imported lazily, in one function,
+# inside a try, so installing it changes examlab from scripted to live and
+# changes nothing else. Nothing under src/playground/ imports it at all.
+#
+#     uv sync --extra live
+[project.optional-dependencies]
+live = ["anthropic"]
+
+# All three packages must be importable: `python -m playground.run` for the Agent
+# SDK demos, `python -m mockserver` for the stdio MCP server they talk to, and
+# `python -m examlab` for the request-level material underneath both. uv_build
+# ships with uv itself, so this adds no runtime dependency.
 [build-system]
 requires = ["uv_build>=0.8,<0.9"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["playground", "mockserver"]
+module-name = ["playground", "mockserver", "examlab"]
 module-root = "src"
 

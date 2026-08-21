@@ -8,7 +8,7 @@ WHY       "Claude calls tools in parallel" is usually repeated as a performance
           decides whether your handlers can assume they run alone, whether two
           writes can interleave, and whether an ordering bug in your tools is
           reachable at all.
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  Parallel calls cut latency and remove your ability to reason about
           order. Independent read-only lookups are safe to overlap; anything
           with shared state or side effects is now a concurrency problem you did
@@ -72,7 +72,7 @@ from playground.tools_mcp.instruments import gaps
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Read the two prompts below and decide, "
              "before running, which one COULD be answered with two calls at "
              "once and which one could not.",

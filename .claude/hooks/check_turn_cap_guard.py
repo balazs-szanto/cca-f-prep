@@ -7,7 +7,7 @@ WHY       Hitting max_turns yields a ResultMessage and THEN raises, so an
           reports what the run measured. This bug has been written and fixed
           three separate times in this repo by someone who knew about it and had
           documented it twice. Knowing a rule is not the same as enforcing it.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  It parses the AST rather than the text, so it understands structure and
           is blind to intent: a bare `except Exception: pass` satisfies it
           completely. It proves a try exists, never that the handler is sensible.

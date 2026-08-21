@@ -1,87 +1,104 @@
-# Domain map — PROVISIONAL
+# Domain map
 
-**This repo's domain labels are not verified against an official source. Do not
-rely on them.**
+Every `DOMAIN` line, every `LESSON` domain field, every `docs/dN-*.md` filename
+and every table below uses the **official** CCA-F blueprint numbering. There is
+no second numbering left in the repo. If you find one, it is a bug.
 
-## What was attempted
+## The official blueprint
 
-The goal was to replace this repo's invented labels with the official exam
-domains, taken from the official exam guide and nothing else. Third-party
-preparation sites, unofficial study guides and blog posts were explicitly ruled
-out as sources, so none of them were used, and none should be used to "fix" this
-file later.
+From the *Claude Certified Architect – Foundations Exam Guide*, version 1.0,
+effective July 2026, exam code CCAR-F. Obtained **2026-08-21** as the PDF
+published on the Anthropic Partner Academy certification page. Primary source; no
+third-party study site was consulted, and none should be used to amend this table.
 
-Attempted on 2026-08-20:
+| # | Content domain | Weight | Doc |
+|---|----------------|--------|-----|
+| 1 | Agentic Architecture & Orchestration | 27% | `d1-orchestration.md` |
+| 2 | Tool Design & MCP Integration | 18% | `d2-tools-mcp.md` |
+| 3 | Claude Code Configuration & Workflows | 20% | `d3-claude-code.md` |
+| 4 | Prompt Engineering & Structured Output | 20% | *none — see gaps below* |
+| 5 | Context Management & Reliability | 15% | `d5-reliability.md` |
 
-| Source | Result |
-|--------|--------|
-| Anthropic's certification announcement | Describes the Architect credential as covering "integration architecture, governance, and evaluation". No numbered domains, no weightings. |
-| Claude Academy resource listing | No certification exam guide or syllabus present. |
-| Anthropic's exam delivery partner page | Registration and scheduling only. No content outline. |
-| The certification landing page | Redirects to an authenticated location; returns HTTP 403 without a session. |
+Exam shape, same source: 60 items, 120 minutes, four scenarios drawn from a bank
+of six, scaled score 100–1000 with a cut score of 720, credential valid twelve
+months.
 
-The official exam guides are described as downloadable from the Partner Academy
-certifications page, which requires membership of the Claude Partner Network and
-an authenticated session. That is not reachable from here, and guessing at its
-contents from secondary sources is exactly what this file exists to avoid.
+## What the relabel changed, 2026-08-21
 
-**Conclusion: no official enumeration was obtained. The map below stays
-provisional and no `LESSON` field or `docs/dN-*.md` filename was relabelled.**
-Relabelling against an unverified map would have produced a repo that looks
-authoritative and is not, which is worse than one that is visibly unlabelled.
+The repo previously used labels invented before the guide was reachable. Two
+numbers were transposed and one had no counterpart:
 
-## The labels this repo actually uses
+| Old label | Now | Files affected |
+|-----------|-----|----------------|
+| D0 Foundations | dissolved into D1, D2, D3 and D4 | `basics/` |
+| D1 Agentic Architecture and Orchestration | D1 (unchanged) | `orchestration/` |
+| D2 Claude Code Configuration and Workflows | **D3** | `.claude/`, `run.py`, `teach.py`, `lessons.py`, `scripts/` |
+| D3 Prompt Engineering | **D4** | `basics/prompt_shape.py` |
+| D4 Tool Design and MCP Integration | **D2** | `tools_mcp/`, `mockserver/` |
+| D5 Context Management and Reliability | D5 (unchanged) | `reliability/` |
 
-These are the author's, not Anthropic's. They are internally consistent and
-externally unverified.
+Where the four `basics/` demos went, since "D0" is gone: `check_auth` to D3,
+`hello` to D1, `tools` to D2, `structured` to D4. Two doc files were renamed —
+`d2-claude-code.md` to `d3-claude-code.md` and `d4-tools-mcp.md` to
+`d2-tools-mcp.md` — and `src/examlab/` dropped the word "Official" from its
+`DOMAIN` lines, which had existed only to mark it apart from the old numbering.
 
-| Label | Used for | Files |
-|-------|----------|-------|
-| D0 Foundations | Auth, the message stream, structured output, the tool mechanism | `basics/` |
-| D1 Agentic Architecture and Orchestration | Who owns control flow; delegation | `orchestration/` |
-| D2 Claude Code Configuration and Workflows | Memory, settings, hooks, slash commands | `.claude/`, `run.py`, `teach.py`, `lessons.py` |
-| D3 Prompt Engineering | Prompt construction | `basics/prompt_shape.py` |
-| D4 Tool Design and MCP Integration | Schemas, transports, permission gating | `tools_mcp/`, `src/mockserver/` |
-| D5 Context Management and Reliability | Context accounting, resumption, failure classification | `reliability/` |
+**Anything written before that date, including a cached page or an old branch,
+uses the old numbers.** That is the only reason this section still exists.
 
-## Two domains have no domain doc
+## Where the repo does not fit the blueprint
 
-`docs/` carries `d1`, `d2`, `d4` and `d5`. There is **no `d0-*.md` and no
-`d3-*.md`**, so for those two the module docstrings and `LESSON` blocks are the
-only material. `.claude/commands/drill.md` accepts `d0` and `d3` and says the
-same thing. This is a gap, not an oversight to be papered over by writing two
-documents against a numbering that is itself unverified — writing `docs/d3-*.md`
-would give the label an authority it has not earned.
+Step 4 of the old recipe was "report any demo whose content does not fit the
+domain it lands in". Doing it produced more than expected, and it is the most
+useful thing on this page if you are studying rather than reading.
 
-## The known defect in this map
+### Demos that land in a domain the exam does not test there
 
-There was no D3 at all until this round, and structured output was filed under
-"D0 Foundations". Those two facts are related: `basics/structured.py` is about
-*constraining a response format*, which is a different subject from *constructing
-a prompt*, and filing the first under a general-purpose bucket is what made the
-absence of the second invisible.
+| Demo | Lands in | The problem |
+|------|----------|-------------|
+| `basics.check_auth` | D3 | Its subject is **explicitly out of scope**. The guide's out-of-scope list names "Claude API authentication, billing, or account management" and "OAuth, API key rotation, or authentication protocol details". The demo is load-bearing for this repo's cost discipline and answers no examinable question. Run it; do not revise it. |
+| `basics.prompt_shape` | D4 | Filed there on the domain's *name*. Its content — instruction/data delimiting against prompt injection — matches **none** of D4's six task statements (explicit criteria, few-shot, structured output, validation-retry, batching, multi-pass review). Injection resistance is not in the blueprint at all. |
+| `basics.hello` | D1 | Genuinely D1, but it teaches the **Agent SDK's** loop, where `query()` owns termination. Task statement 1.1 tests `stop_reason` control flow, which this demo cannot show. `examlab/agentic_loop.py` is the one that answers 1.1. |
+| `basics.structured` | D4 | Adjacent, not equal. `output_format` is an Agent SDK feature; task statement 4.3 tests `tool_use` with a JSON schema. Different mechanism, same goal. `examlab/structured_output.py` covers the examinable one. |
 
-`basics/prompt_shape.py` now occupies D3 and is genuinely about prompt
-construction. `structured.py` has deliberately **not** been moved into it, for
-the reason above — output shaping is not prompt engineering, and merging them
-would recreate the confusion in the opposite direction.
+### Task statements with no coverage anywhere in this repo
 
-"D0 Foundations" remains the weakest label here. It is a bucket, not a domain,
-and it holds four files that have little in common beyond being read first. If an
-official enumeration ever becomes available, that is the label most likely to
-dissolve into two or three real ones.
+Listed because a coverage table read without them overstates what is here.
 
-## If you can reach the official guide
+- **3.2 — skills.** There is no `.claude/skills/` directory. `context: fork`,
+  `allowed-tools` and `argument-hint` frontmatter are untouched, and the guide
+  names all three. This is the largest single gap, in a 20% domain.
+- **3.3 — path-specific rules.** There is no `.claude/rules/` directory, so
+  YAML `paths` frontmatter and glob-scoped convention loading are absent. Two of
+  the guide's twelve sample questions turn on this.
+- **3.5 — iterative refinement.** Input/output examples, test-driven iteration,
+  the interview pattern. Nothing.
+- **3.6 — CI/CD integration.** `-p`/`--print`, `--output-format json`,
+  `--json-schema`. Nothing.
+- **4.1 and 4.2 — explicit criteria and few-shot prompting.** Nothing, and
+  together they are two of D4's six statements.
+- **1.7 (partial) — forking.** `reliability/session_resume.py` covers resumption;
+  `fork_session` is never used.
+- **5.5 and 5.6 — human review and provenance.** Confidence calibration,
+  stratified sampling, claim-source mappings, conflict annotation. Nothing.
 
-Do this, in order:
+Rough shape of it: D1, D2 and D5 are well covered, D3 is covered where it is
+inert and absent where it is examinable, and D4 has the examinable half in
+`examlab/` and the prompt-engineering half missing. `docs/status.md` carries the
+per-domain assessment; this list is the blueprint-side view of the same thing.
 
-1. Replace the table above with the official domains verbatim, including their
-   weightings.
-2. Update the `domain` field in each module's `LESSON` block. That field is the
-   single source of truth — `docs/lessons.md` is generated from it, so do not
-   edit that file by hand.
-3. Rename `docs/dN-*.md` to match, and fix the cross-references in `README.md`
-   and `.claude/commands/drill.md`, which names the domains it will quiz on.
-4. Report any demo whose content does not fit the domain it lands in. That
-   mismatch is a finding about the repo, not about the exam.
-5. Delete this warning and the attempt log above.
+## The defect this page recorded before the guide arrived, and how it turned out
+
+There was no D3 at all in the old numbering until late in the project, and
+structured output was filed under "D0 Foundations". Those facts were related:
+`basics/structured.py` is about *constraining a response format*, which is a
+different subject from *constructing a prompt*, and filing the first in a
+general-purpose bucket is what made the absence of the second invisible. The fix
+applied at the time was to separate them into two labels.
+
+**The blueprint settles that argument the other way.** Its domain 4 is "Prompt
+Engineering **& Structured Output**" — one domain, both subjects. So the two
+demos belong together, and the recorded decision to keep them apart was wrong on
+the official carve-up. The correction is attached rather than the decision being
+quietly reversed, because being wrong about a judgement call is the normal case
+and hiding it is what makes the next one harder to check.

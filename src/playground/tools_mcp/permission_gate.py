@@ -5,7 +5,7 @@ WHY       allowed_tools is a static decision made before the run starts: a tool
           is either available or it is not. can_use_tool is a dynamic decision
           made per call, with the actual arguments in hand, which is the only
           place you can say "deleting is fine, deleting THAT is not".
-DOMAIN    D4 Tool Design and MCP Integration
+DOMAIN    D2 Tool Design and MCP Integration
 TRADEOFF  The gate runs in your process on every call, so it is a latency and a
           correctness liability: a slow or throwing callback stalls or breaks the
           agent loop. It also sees one call at a time, so it cannot stop a
@@ -48,7 +48,7 @@ from playground import teach
 MODEL = "claude-haiku-4-5"
 
 LESSON = {
-    "domain": "D4 Tool Design and MCP Integration",
+    "domain": "D2 Tool Design and MCP Integration",
     "setup": "basics.check_auth passed. Read gate() and then read the "
              "allowed_tools argument in main() - the relationship between those "
              "two is the entire demo.",

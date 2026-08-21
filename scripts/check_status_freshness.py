@@ -7,7 +7,7 @@ WHY       This repo's core claim is that it separates what was measured from wha
           same shape: an edit lands after the run, and the row keeps asserting an
           output nobody has seen since. It has been introduced, found and
           declared fixed four times. Prose accounting did not hold; this does.
-DOMAIN    D2 Claude Code Configuration and Workflows
+DOMAIN    D3 Claude Code Configuration and Workflows
 TRADEOFF  Modification time is a crude proxy for "the behaviour might have
           changed". A comment fix trips it exactly as loudly as a rewritten
           prompt, so it over-reports, and a caveat that fires constantly is a
@@ -39,7 +39,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATUS = ROOT / "docs" / "status.md"
-DEMO_ROOT = ROOT / "src" / "playground"
+sys.path.insert(0, str(ROOT / "src"))
 
 # WHY: parses the table rather than importing run.py. The question this asks is
 # "does the document agree with the tree", so reading the document as a document
@@ -54,7 +54,19 @@ ROW = re.compile(
 
 
 def demo_path(demo: str) -> Path:
-    return DEMO_ROOT.joinpath(*demo.split(".")).with_suffix(".py")
+    """Where a row's demo lives, delegated to the one function that knows.
+
+    WHY delegated and not a second `src/playground` join: the registry spans two
+    packages now, and a row can name `examlab.chaining`. Hardcoding the layout
+    here would mean two copies of the package list, which is the drift this
+    repo automates against everywhere else. It does not weaken the check the
+    module docstring describes - the table is still parsed as a table, so a row
+    naming a demo that does not exist is still reported rather than resolved
+    away. Only *file location* is delegated, never row membership.
+    """
+    from playground.lessons import path_of
+
+    return path_of(demo)
 
 
 def main() -> int:
