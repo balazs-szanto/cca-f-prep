@@ -42,7 +42,8 @@ This project is written around an **interactive Claude Code CLI session**.
 
   **The fourth raise, 240 to 270, is the first one where that rule was applied
   and then found insufficient, so it is written up rather than just applied.**
-  Three D4 files hit 240 exactly — not a coincidence, a binding constraint — and
+  Three `tools_mcp/` files hit 240 exactly — not a coincidence, a binding
+  constraint — and
   an audit found prose had been cut to fit in all three: a generalisation about
   measurement removed from a helper, a cost claim removed from a TRADEOFF, a
   section heading demoted to a footnote so its evidence stopped looking like the
@@ -88,17 +89,35 @@ absolute currency figure in the repo: ratios survive a price change and a repeat
 run, absolute numbers do not.
 
 ## Layout
+
+Domains are the **official CCA-F blueprint's** (D1–D5), as of the relabel of
+2026-08-21. See `docs/domain-map.md` for the table and the old-to-new map.
+
+**This table was the last thing in the repo still carrying the pre-relabel
+labels, and it was found on 2026-08-21 by auditing counts in the README rather
+than by anything systematic.** It said `D0` for `basics/` — a domain the official
+blueprint does not have — `D4` for `tools_mcp/` and `D2` for `.claude/`, both of
+which now mean something else. Left recorded because it is the sharpest example
+of the failure this repo keeps automating against: the relabel touched every
+`DOMAIN` line, every `LESSON` block, both renamed docs, `run.py`, `drill.md`,
+`traps.md` and `README.md`, and missed the file whose instructions override all
+of them. **A directory is not one domain**, which is the other reason this table
+was wrong and the reason it now names them per demo.
+
 | Path | Domain | Contains |
 |------|--------|----------|
-| `src/playground/basics/` | D0 | V1: auth, hello, structured output, one MCP tool |
-| `src/playground/orchestration/` | D1 | Workflow vs agent, subagent delegation |
-| `src/playground/tools_mcp/` | D4 | Schema design, external MCP, permission gate |
-| `src/playground/reliability/` | D5 | Session resume, error taxonomy, context budget |
-| `.claude/` | D2 | Settings, a PreToolUse hook, a custom slash command |
-| `docs/` | all | One file per domain, plus traps and open questions |
+| `src/playground/basics/` | D1, D2, D3, D4 | auth (D3), hello (D1), prompt shape and structured output (D4), one in-process MCP tool (D2) |
+| `src/playground/orchestration/` | D1 | Triage pipeline, workflow vs agent, subagent delegation |
+| `src/playground/tools_mcp/` | D2 | Schema design, parallel calls, tool overhead, external MCP, permission gate, execution boundary |
+| `src/playground/reliability/` | D5, and D1 for both session demos | Session resume and fork (D1, task statement 1.7), error taxonomy, context budget |
+| `src/examlab/` | D1, D2, D3, D4, D5 | The request level the SDK owns for you: the loop, its anti-patterns, parallel tool use, chaining, `tool_choice`, tool errors, refinement, review criteria, structured output, validation-retry, batches, confidence routing, provenance |
+| `.claude/` | D3 | Settings, two hooks, two skills, two path rules, a slash command |
+| `docs/` | all | One file per domain, plus traps, the tool-surface triage, the run inventory and the blueprint map |
 
 `src/playground/CLAUDE.md` is a nested memory file; it demonstrates hierarchy and
-is deliberately narrower than this one.
+is deliberately narrower than this one. `src/examlab/CLAUDE.md` is the other one,
+and it amends the auth rule below rather than only narrowing it — read it before
+running anything in that package.
 
 ## Running
     uv sync
